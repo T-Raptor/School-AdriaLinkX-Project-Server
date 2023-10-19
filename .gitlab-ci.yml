@@ -1,0 +1,51 @@
+image: registry.ti.howest.be:5000/project-2:server-build_QA
+
+stages:
+  - build
+  - QA
+  - deploy
+
+build-jar:
+  stage: build
+  only:
+    - main
+  except:
+    changes:
+      - documents/**/*
+  script:
+    - gradle shadowJar
+  artifacts:
+    untracked: false
+    paths:
+      - build/libs/
+
+testing:
+  stage: QA
+  needs:
+    - build-jar
+  except:
+    changes:
+      - documents/**/*
+  script:
+    - gradle clean test --info
+    - gradle sonarqube -Dsonar.host.url=https://sonarqube.ti.howest.be
+  artifacts:
+    when: always
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
+
+deployment:
+  stage: deploy
+  image: registry.ti.howest.be:5000/project-2:server-deploy
+  variables:
+    year: 2023-2024
+  only:
+    - main
+  except:
+    changes:
+      - documents/**/*
+  script:
+    - mv build/libs/*.jar ${CI_PROJECT_NAMESPACE##*/}.jar
+    - scp -q ${CI_PROJECT_NAMESPACE##*/}.jar gitlab-runner@project-2.ti.howest.be:/opt/${year}/${CI_PROJECT_NAMESPACE##*/}
+    - ssh gitlab-runner@project-2.ti.howest.be sudo systemctl restart ${CI_PROJECT_NAMESPACE##*/}
+    - echo "Project 2 service for group ${CI_PROJECT_NAMESPACE##*/} restarted"
