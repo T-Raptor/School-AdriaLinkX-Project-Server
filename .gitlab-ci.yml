@@ -1,5 +1,11 @@
 image: registry.ti.howest.be:5000/project-2:server-build_QA
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: never
+    - when: always
+
 stages:
   - build
   - QA
