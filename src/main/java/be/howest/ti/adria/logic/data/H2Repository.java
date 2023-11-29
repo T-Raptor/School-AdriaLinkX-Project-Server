@@ -1,6 +1,7 @@
 package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
@@ -21,7 +22,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository {
+public class H2Repository implements StationRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -163,5 +164,45 @@ public class H2Repository {
 
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, username, password);
+    }
+
+
+    @Override
+    public Station getStations() {
+        return null;
+    }
+
+    public Station getStation(int id) {
+        return null;
+    }
+
+    @Override
+    public Station insertStation(String name, double latitude, double longitude) {
+        return null;
+    }
+
+    @Override
+    public Station deleteStation(int id) {
+        return null;
+    }
+
+    @Override
+    public Station updateStation(int id, String name, double latitude, double longitude) {
+        return null;
+    }
+
+    @Override
+    public Station updateStationName(int id, String name) {
+        return null;
+    }
+
+    @Override
+    public Station updateStationLatitude(int id, double latitude) {
+        return null;
+    }
+
+    @Override
+    public Station updateStationLongitude(int id, double longitude) {
+        return null;
     }
 }
