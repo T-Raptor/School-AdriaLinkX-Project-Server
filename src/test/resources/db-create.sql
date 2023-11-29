@@ -18,5 +18,6 @@ create table stations
     latitude double,
     longitude double,
     primary key (observable_id),
-    foreign key (observable_id) references observables(id)
+    foreign key (observable_id) references observables(id),
+    unique key (name)
 );
