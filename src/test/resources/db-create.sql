@@ -1,18 +1,17 @@
-drop table if exists quotes;
+DROP ALL OBJECTS;
+
 create table quotes
 (
     id    int auto_increment,
     quote varchar(255)
 );
 
-drop table if exists observables;
 create table observables
 (
     id  int auto_increment,
     primary key (id)
 );
 
-drop table if exists stations;
 create table stations
 (
     observable_id int,
