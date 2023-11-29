@@ -5,12 +5,14 @@ create table quotes
     quote varchar(255)
 );
 
+drop table if exists observables;
 create table observables
 (
     id  int auto_increment,
     primary key (id)
 );
 
+drop table if exists stations;
 create table stations
 (
     observable_id int,
