@@ -35,9 +35,6 @@ public class H2Repository implements StationRepository {
     private static final String SQL_SELECT_STATION = "select observable_id, name, latitude, longitude from stations where id = ?;";
     private static final String SQL_INSERT_STATION = "insert into stations values (?, ?, ?, ?);";
     private static final String SQL_UPDATE_STATION = "update stations set  = ? where observable_id = ?;";
-    private static final String SQL_UPDATE_STATION_NAME = "update stations set name = ? where observable_id = ?;";
-    private static final String SQL_UPDATE_STATION_LATITUDE = "update stations set latitude = ? where observable_id = ?;";
-    private static final String SQL_UPDATE_STATION_LONGITUDE = "update stations set longitude = ? where observable_id = ?;";
     private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
 
     private final Server dbWebConsole;
@@ -236,6 +233,7 @@ public class H2Repository implements StationRepository {
         return null;
     }
 
+    @Override
     public Station getStation(int id) {
         return null;
     }
@@ -246,27 +244,13 @@ public class H2Repository implements StationRepository {
     }
 
     @Override
-    public Station deleteStation(int id) {
-        return null;
-    }
-
-    @Override
     public Station updateStation(int id, String name, double latitude, double longitude) {
         return null;
     }
 
     @Override
-    public Station updateStationName(int id, String name) {
+    public Station deleteStation(int id) {
         return null;
     }
 
-    @Override
-    public Station updateStationLatitude(int id, double latitude) {
-        return null;
-    }
-
-    @Override
-    public Station updateStationLongitude(int id, double longitude) {
-        return null;
-    }
 }
