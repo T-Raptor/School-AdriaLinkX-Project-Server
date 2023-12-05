@@ -5,11 +5,24 @@ import io.netty.util.internal.StringUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 public abstract class StationRepositoryTest {
     protected StationRepository repository;
 
     private static final double EPSILON = 0.01;
 
+    @Test
+    void getStations() {
+        // Arrange
+
+        // Act
+        List<Station> stations = repository.getStations();
+
+        // Assert
+        Assertions.assertNotNull(stations);
+        Assertions.assertEquals(3, stations.size());
+    }
 
     @Test
     void getStation() {
