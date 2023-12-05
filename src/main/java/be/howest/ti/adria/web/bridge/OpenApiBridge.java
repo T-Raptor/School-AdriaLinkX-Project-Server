@@ -3,6 +3,7 @@ package be.howest.ti.adria.web.bridge;
 import be.howest.ti.adria.logic.controller.DefaultController;
 import be.howest.ti.adria.logic.controller.Controller;
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -10,6 +11,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -47,6 +49,9 @@ public class OpenApiBridge {
 
         LOGGER.log(Level.INFO, "Installing handler for: deleteQuote");
         routerBuilder.operation("deleteQuote").handler(this::deleteQuote);
+
+        LOGGER.log(Level.INFO, "Installing handler for: getStations");
+        routerBuilder.operation("getStations").handler(this::getStations);
 
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
@@ -87,6 +92,13 @@ public class OpenApiBridge {
 
         Response.sendQuoteDeleted(ctx);
     }
+
+
+    public void getStations(RoutingContext ctx) {
+        List<Station> stations = controller.getStations();
+        Response.sendStations(ctx, stations);
+    }
+
 
     private void onFailedRequest(RoutingContext ctx) {
         Throwable cause = ctx.failure();
