@@ -2,8 +2,10 @@ package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.Station;
 
+import java.util.List;
+
 public interface StationRepository {
-    Station getStations();
+    List<Station> getStations();
     Station getStation(int id);
 
     Station insertStation(String name, double latitude, double longitude);

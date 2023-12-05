@@ -229,7 +229,7 @@ public class H2Repository implements StationRepository {
 
 
     @Override
-    public Station getStations() {
+    public List<Station> getStations() {
         return null;
     }
 
