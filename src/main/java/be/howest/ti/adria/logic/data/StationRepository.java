@@ -10,5 +10,5 @@ public interface StationRepository {
 
     Station insertStation(String name, double latitude, double longitude);
     Station updateStation(int id, String name, double latitude, double longitude);
-    Station deleteStation(int id);
+    void deleteStation(int id);
 }

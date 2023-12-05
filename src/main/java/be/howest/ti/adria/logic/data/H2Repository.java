@@ -31,10 +31,12 @@ public class H2Repository implements StationRepository {
     private static final String SQL_UPDATE_QUOTE = "update quotes set quote = ? where id = ?;";
     private static final String SQL_DELETE_QUOTE = "delete from quotes where id = ?;";
 
-    private static final String SQL_SELECT_STATIONS = "select observable_id, name, latitude, longitude from stations;";
-    private static final String SQL_SELECT_STATION = "select observable_id, name, latitude, longitude from stations where id = ?;";
+    private static final String SQL_INSERT_OBSERVABLE = "insert into observables values ();";
+
+    private static final String SQL_SELECT_STATIONS = "select observable_id as id, name, latitude, longitude from stations;";
+    private static final String SQL_SELECT_STATION = "select observable_id as id, name, latitude, longitude from stations where observable_id = ?;";
     private static final String SQL_INSERT_STATION = "insert into stations values (?, ?, ?, ?);";
-    private static final String SQL_UPDATE_STATION = "update stations set  = ? where observable_id = ?;";
+    private static final String SQL_UPDATE_STATION = "update stations set `name` = ?, `latitude` = ?, `longitude` = ? where observable_id = ?;";
     private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
 
     private final Server dbWebConsole;
@@ -228,29 +230,67 @@ public class H2Repository implements StationRepository {
     }
 
 
+    private int insertObservable() {
+        return insertRow(
+                SQL_INSERT_OBSERVABLE,
+                stmt -> {},
+                rs -> rs.getInt(1)
+        );
+    }
+
+
     @Override
     public List<Station> getStations() {
-        return null;
+        return getRows(
+                SQL_SELECT_STATIONS,
+                stmt -> { },
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+        );
     }
 
     @Override
     public Station getStation(int id) {
-        return null;
+        return getRow(
+                SQL_SELECT_STATION,
+                stmt -> stmt.setInt(1, id),
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+        );
     }
 
     @Override
     public Station insertStation(String name, double latitude, double longitude) {
-        return null;
+        int id = insertObservable();
+        return insertRow(
+                SQL_INSERT_STATION,
+                stmt -> {
+                    stmt.setInt(1, id);
+                    stmt.setString(2, name);
+                    stmt.setDouble(3, latitude);
+                    stmt.setDouble(4, longitude);
+                },
+                rs -> new Station(id, name, latitude, longitude)
+        );
     }
 
     @Override
     public Station updateStation(int id, String name, double latitude, double longitude) {
-        return null;
+        updateRow(
+                SQL_UPDATE_STATION,
+                stmt -> {
+                    stmt.setString(1, name);
+                    stmt.setDouble(2, latitude);
+                    stmt.setDouble(3, longitude);
+                    stmt.setInt(4, id);
+                }
+        );
+        return new Station(id, name, latitude, longitude);
     }
 
     @Override
-    public Station deleteStation(int id) {
-        return null;
+    public void deleteStation(int id) {
+        deleteRow(
+                SQL_DELETE_STATION,
+                stmt -> stmt.setInt(1, id)
+        );
     }
-
 }
