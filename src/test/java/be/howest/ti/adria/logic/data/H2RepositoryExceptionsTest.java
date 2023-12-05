@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-class AdriaH2RepositoryExceptionsTest {
+class H2RepositoryExceptionsTest {
 
     private static final String URL = "jdbc:h2:./db-12";
 

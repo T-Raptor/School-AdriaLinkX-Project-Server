@@ -1,6 +1,10 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Station;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MockController implements Controller {
     private static final String SOME_QUOTE = "quote";
@@ -23,4 +27,12 @@ public class MockController implements Controller {
     public void deleteQuote(int quoteId) {
     }
 
+
+    @Override
+    public List<Station> getStations() {
+        List<Station> stations = new ArrayList<>();
+        stations.add(new Station(1, "Adria", 50.85292760248162, 4.351725442466426));
+        stations.add(new Station(1, "Bdria", 47.03051037331985, 2.286659149568905));
+        return stations;
+    }
 }
