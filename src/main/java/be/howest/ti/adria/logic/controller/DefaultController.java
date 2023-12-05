@@ -2,8 +2,10 @@ package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Station;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -56,5 +58,11 @@ public class DefaultController implements Controller {
             throw new NoSuchElementException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
 
         Repositories.getH2Repo().deleteQuote(quoteId);
+    }
+
+
+    @Override
+    public List<Station> getStations() {
+        return Repositories.getH2Repo().getStations();
     }
 }
