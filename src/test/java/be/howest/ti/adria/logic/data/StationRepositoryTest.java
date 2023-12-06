@@ -30,7 +30,7 @@ public abstract class StationRepositoryTest {
         int id = 1;
 
         // Act
-        Station station = repository.getStation(1);
+        Station station = repository.getStation(id);
 
         // Assert
         Assertions.assertNotNull(station);
@@ -80,12 +80,12 @@ public abstract class StationRepositoryTest {
     @Test
     void deleteStation() {
         // Arrange
-        int id = 1;
+        Station station = repository.insertStation("Auriga", 0, 0);
 
         // Act
-        repository.deleteStation(id);
+        repository.deleteStation(station.getId());
 
         // Assert
-        Assertions.assertNull(repository.getStation(id));
+        Assertions.assertNull(repository.getStation(station.getId()));
     }
 }
