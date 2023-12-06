@@ -27,6 +27,8 @@ public class Station implements Observable {
         return this.longitude;
     }
 
+
+    @Override
     public int getId() {
         return this.id;
     }
