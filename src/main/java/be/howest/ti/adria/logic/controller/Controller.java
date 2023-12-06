@@ -1,6 +1,9 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Station;
+
+import java.util.List;
 
 public interface Controller {
     Quote getQuote(int quoteId);
@@ -10,4 +13,7 @@ public interface Controller {
     Quote updateQuote(int quoteId, String quote);
 
     void deleteQuote(int quoteId);
+
+
+    List<Station> getStations();
 }

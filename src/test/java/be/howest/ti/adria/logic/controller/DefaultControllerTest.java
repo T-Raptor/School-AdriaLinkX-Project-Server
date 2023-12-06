@@ -2,6 +2,7 @@ package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Station;
 import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -137,4 +139,17 @@ class DefaultControllerTest {
         assertThrows(NoSuchElementException.class, () -> sut.deleteQuote(-1));
     }
 
+
+    @Test
+    void getStations() {
+        // Arrange
+        Controller sut = new DefaultController();
+
+        // Act
+        List<Station> stations = sut.getStations();
+
+        //Assert
+        assertNotNull(stations);
+        assertFalse(stations.isEmpty());
+    }
 }

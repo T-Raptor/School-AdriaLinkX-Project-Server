@@ -7,8 +7,6 @@ stages:
 
 build-jar:
   stage: build
-  only:
-    - main
   except:
     changes:
       - documents/**/*

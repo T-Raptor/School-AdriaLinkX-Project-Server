@@ -1,6 +1,7 @@
 package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
@@ -10,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,12 +24,21 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository {
+public class H2Repository implements StationRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
     private static final String SQL_UPDATE_QUOTE = "update quotes set quote = ? where id = ?;";
     private static final String SQL_DELETE_QUOTE = "delete from quotes where id = ?;";
+
+    private static final String SQL_INSERT_OBSERVABLE = "insert into observables values ();";
+
+    private static final String SQL_SELECT_STATIONS = "select observable_id as id, name, latitude, longitude from stations;";
+    private static final String SQL_SELECT_STATION = "select observable_id as id, name, latitude, longitude from stations where observable_id = ?;";
+    private static final String SQL_INSERT_STATION = "insert into stations values (?, ?, ?, ?);";
+    private static final String SQL_UPDATE_STATION = "update stations set `name` = ?, `latitude` = ?, `longitude` = ? where observable_id = ?;";
+    private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
+
     private final Server dbWebConsole;
     private final String username;
     private final String password;
@@ -48,78 +60,25 @@ public class H2Repository {
         }
     }
 
-    public Quote getQuote(int id) {
+
+    private void executeScript(String fileName) throws IOException, SQLException {
+        String createDbSql = readFile(fileName);
         try (
                 Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(SQL_QUOTA_BY_ID)
+                PreparedStatement stmt = conn.prepareStatement(createDbSql);
         ) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Quote(rs.getInt("id"), rs.getString("quote"));
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to get quote.", ex);
-            throw new RepositoryException("Could not get quote.");
-        }
-    }
-
-    public Quote insertQuote(String quoteValue) {
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(SQL_INSERT_QUOTE, Statement.RETURN_GENERATED_KEYS)) {
-
-            stmt.setString(1, quoteValue);
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating user failed, no rows affected.");
-            }
-
-            Quote quote = new Quote(quoteValue);
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    quote.setId(generatedKeys.getInt(1));
-                    return quote;
-                }
-                else {
-                    throw new SQLException("Creating quote failed, no ID obtained.");
-                }
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to create quote.", ex);
-            throw new RepositoryException("Could not create quote.");
-        }
-    }
-
-    public Quote updateQuote(int quoteId, String quote) {
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE_QUOTE)) {
-
-            stmt.setString(1, quote);
-            stmt.setInt(2, quoteId);
             stmt.executeUpdate();
-            return new Quote(quoteId, quote);
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to update quote.", ex);
-            throw new RepositoryException("Could not update quote.");
         }
     }
 
-    public void deleteQuote(int quoteId) {
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(SQL_DELETE_QUOTE)) {
+    private String readFile(String fileName) throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null)
+            throw new RepositoryException("Could not read file: " + fileName);
 
-            stmt.setInt(1, quoteId);
-            stmt.execute();
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to delete quote.", ex);
-            throw new RepositoryException("Could not delete quote.");
-        }
+        return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     }
+
 
     public void cleanUp() {
         if (dbWebConsole != null && dbWebConsole.isRunning(false))
@@ -143,25 +102,195 @@ public class H2Repository {
         }
     }
 
-    private void executeScript(String fileName) throws IOException, SQLException {
-        String createDbSql = readFile(fileName);
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, username, password);
+    }
+
+
+    private <T> T getRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
         try (
                 Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(createDbSql);
+                PreparedStatement stmt = conn.prepareStatement(statement)
         ) {
-            stmt.executeUpdate();
+            configurator.accept(stmt);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return processor.apply(rs);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to get rows.", ex);
+            throw new RepositoryException("Could not get rows.");
         }
     }
 
-    private String readFile(String fileName) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
-        if (inputStream == null)
-            throw new RepositoryException("Could not read file: " + fileName);
-
-        return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+    private <T> List<T> getRows(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(statement)
+        ) {
+            configurator.accept(stmt);
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<T> rows = new ArrayList<>();
+                while (rs.next()) {
+                    rows.add(processor.apply(rs));
+                }
+                return rows;
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to get rows.", ex);
+            throw new RepositoryException("Could not get rows.");
+        }
     }
 
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, username, password);
+    private <T> T insertRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+
+            configurator.accept(stmt);
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating row failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return processor.apply(generatedKeys);
+                }
+                else {
+                    throw new SQLException("Creating row failed, no ID obtained.");
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to create row.", ex);
+            throw new RepositoryException("Could not create row.");
+        }
+    }
+
+    private void updateRow(String statement, SqlConsumer<PreparedStatement> configurator) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(statement)) {
+
+            configurator.accept(stmt);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to update row.", ex);
+            throw new RepositoryException("Could not update row.");
+        }
+    }
+
+    public void deleteRow(String statement, SqlConsumer<PreparedStatement> configurator) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(statement)) {
+
+            configurator.accept(stmt);
+            stmt.execute();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to delete row.", ex);
+            throw new RepositoryException("Could not delete row.");
+        }
+    }
+
+
+    public Quote getQuote(int id) {
+        return getRow(
+                SQL_QUOTA_BY_ID,
+                stmt -> stmt.setInt(1, id),
+                rs -> new Quote(rs.getInt("id"), rs.getString("quote"))
+        );
+    }
+
+    public Quote insertQuote(String quoteValue) {
+        return insertRow(
+                SQL_INSERT_QUOTE,
+                stmt -> stmt.setString(1, quoteValue),
+                rs -> new Quote(rs.getInt(1), quoteValue)
+        );
+    }
+
+    public Quote updateQuote(int quoteId, String quote) {
+        updateRow(
+                SQL_UPDATE_QUOTE,
+                stmt -> {
+                    stmt.setString(1, quote);
+                    stmt.setInt(2, quoteId);
+                }
+        );
+        return new Quote(quoteId, quote);
+    }
+
+    public void deleteQuote(int quoteId) {
+        deleteRow(
+                SQL_DELETE_QUOTE,
+                stmt -> stmt.setInt(1, quoteId)
+        );
+    }
+
+
+    private int insertObservable() {
+        return insertRow(
+                SQL_INSERT_OBSERVABLE,
+                stmt -> {},
+                rs -> rs.getInt(1)
+        );
+    }
+
+
+    @Override
+    public List<Station> getStations() {
+        return getRows(
+                SQL_SELECT_STATIONS,
+                stmt -> { },
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+        );
+    }
+
+    @Override
+    public Station getStation(int id) {
+        return getRow(
+                SQL_SELECT_STATION,
+                stmt -> stmt.setInt(1, id),
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+        );
+    }
+
+    @Override
+    public Station insertStation(String name, double latitude, double longitude) {
+        int id = insertObservable();
+        return insertRow(
+                SQL_INSERT_STATION,
+                stmt -> {
+                    stmt.setInt(1, id);
+                    stmt.setString(2, name);
+                    stmt.setDouble(3, latitude);
+                    stmt.setDouble(4, longitude);
+                },
+                rs -> new Station(id, name, latitude, longitude)
+        );
+    }
+
+    @Override
+    public Station updateStation(int id, String name, double latitude, double longitude) {
+        updateRow(
+                SQL_UPDATE_STATION,
+                stmt -> {
+                    stmt.setString(1, name);
+                    stmt.setDouble(2, latitude);
+                    stmt.setDouble(3, longitude);
+                    stmt.setInt(4, id);
+                }
+        );
+        return new Station(id, name, latitude, longitude);
+    }
+
+    @Override
+    public void deleteStation(int id) {
+        deleteRow(
+                SQL_DELETE_STATION,
+                stmt -> stmt.setInt(1, id)
+        );
     }
 }

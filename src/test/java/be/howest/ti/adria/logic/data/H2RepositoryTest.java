@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-class AdriaH2RepositoryTest {
+class H2RepositoryTest {
     private static final String URL = "jdbc:h2:./db-12";
 
     @BeforeEach

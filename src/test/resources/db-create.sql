@@ -1,4 +1,5 @@
-drop table if exists quotes;
+DROP ALL OBJECTS;
+
 create table quotes
 (
     id    int auto_increment,
