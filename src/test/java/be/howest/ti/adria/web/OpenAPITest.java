@@ -136,6 +136,7 @@ class OpenAPITest {
                 .onSuccess(response -> testContext.verify(() -> {
                     assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
                     JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
                     for (int i = 0; i < array.size(); i++) {
                         JsonObject body = array.getJsonObject(i);
                         assertFalse(StringUtil.isNullOrEmpty(body.getString("name")));
@@ -153,6 +154,7 @@ class OpenAPITest {
                 .onSuccess(response -> testContext.verify(() -> {
                     assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
                     JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
                     for (int i = 0; i < array.size(); i++) {
                         JsonObject body = array.getJsonObject(i);
                         assertNotNull(body.getJsonObject("station1"));
