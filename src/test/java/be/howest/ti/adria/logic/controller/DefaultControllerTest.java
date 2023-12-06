@@ -3,6 +3,7 @@ package be.howest.ti.adria.logic.controller;
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.Quote;
 import be.howest.ti.adria.logic.domain.Station;
+import be.howest.ti.adria.logic.domain.Track;
 import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -151,5 +152,18 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(stations);
         assertFalse(stations.isEmpty());
+    }
+
+    @Test
+    void getTracks() {
+        // Arrange
+        Controller sut = new DefaultController();
+
+        // Act
+        List<Track> tracks = sut.getTracks();
+
+        //Assert
+        assertNotNull(tracks);
+        assertFalse(tracks.isEmpty());
     }
 }
