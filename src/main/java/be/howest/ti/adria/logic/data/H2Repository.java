@@ -6,7 +6,6 @@ import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +39,8 @@ public class H2Repository implements StationRepository, TrackRepository {
     private static final String SQL_INSERT_STATION = "insert into stations values (?, ?, ?, ?);";
     private static final String SQL_UPDATE_STATION = "update stations set `name` = ?, `latitude` = ?, `longitude` = ? where observable_id = ?;";
     private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
+
+    private static final String SQL_SELECT_TRACKS = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id;";
 
     private final Server dbWebConsole;
     private final String username;
@@ -299,7 +300,15 @@ public class H2Repository implements StationRepository, TrackRepository {
 
     @Override
     public List<Track> getTracks() {
-        return null;
+        return getRows(
+                SQL_SELECT_TRACKS,
+                stmt -> { },
+                rs -> {
+                    Station station1 = new Station(rs.getInt("s1_id"), rs.getString("s1_name"), rs.getDouble("s1_latitude"), rs.getDouble("s1_longitude"));
+                    Station station2 = new Station(rs.getInt("s2_id"), rs.getString("s2_name"), rs.getDouble("s2_latitude"), rs.getDouble("s2_longitude"));
+                    return new Track(rs.getInt("id"), station1, station2);
+                }
+        );
     }
 
     @Override
