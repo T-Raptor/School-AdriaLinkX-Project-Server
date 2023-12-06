@@ -20,3 +20,15 @@ create table stations
     foreign key (observable_id) references observables(id),
     unique key (name)
 );
+
+create table tracks
+(
+    observable_id int,
+    station1 int,
+    station2 int,
+    primary key (observable_id),
+    foreign key (observable_id) references observables(id),
+    foreign key (station1) references stations(observable_id),
+    foreign key (station2) references stations(observable_id),
+    unique key (station1, station2)
+);
