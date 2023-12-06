@@ -44,6 +44,7 @@ public class H2Repository implements StationRepository, TrackRepository {
     private static final String SQL_SELECT_TRACK = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id where t.observable_id = ?;";
     private static final String SQL_INSERT_TRACK = "insert into tracks values (?, ?, ?);";
     private static final String SQL_UPDATE_TRACK = "update tracks set `station1` = ?, `station2` = ? where observable_id = ?;";
+    private static final String SQL_DELETE_TRACK = "delete from tracks where observable_id = ?;";
 
     private final Server dbWebConsole;
     private final String username;
@@ -356,6 +357,9 @@ public class H2Repository implements StationRepository, TrackRepository {
 
     @Override
     public void deleteTrack(int id) {
-        throw new RepositoryException("Not yet implemented");
+        deleteRow(
+                SQL_DELETE_TRACK,
+                stmt -> stmt.setInt(1, id)
+        );
     }
 }
