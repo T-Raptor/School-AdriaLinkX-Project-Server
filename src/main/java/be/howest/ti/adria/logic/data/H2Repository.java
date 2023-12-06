@@ -42,6 +42,7 @@ public class H2Repository implements StationRepository, TrackRepository {
 
     private static final String SQL_SELECT_TRACKS = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id;";
     private static final String SQL_SELECT_TRACK = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id where t.observable_id = ?;";
+    private static final String SQL_INSERT_TRACK = "insert into tracks values (?, ?, ?);";
 
     private final Server dbWebConsole;
     private final String username;
@@ -327,7 +328,16 @@ public class H2Repository implements StationRepository, TrackRepository {
 
     @Override
     public Track insertTrack(Station station1, Station station2) {
-        return null;
+        int id = insertObservable();
+        return insertRow(
+                SQL_INSERT_TRACK,
+                stmt -> {
+                    stmt.setInt(1, id);
+                    stmt.setInt(2, station1.getId());
+                    stmt.setInt(3, station2.getId());
+                },
+                rs -> new Track(id, station1, station2)
+        );
     }
 
     @Override
