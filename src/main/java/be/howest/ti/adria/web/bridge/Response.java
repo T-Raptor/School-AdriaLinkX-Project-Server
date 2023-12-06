@@ -64,7 +64,7 @@ public class Response {
         ctx.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .setStatusCode(statusCode)
-                .end(Json.encodePrettily(response));
+                .end(response);
     }
 
     public static void sendFailure(RoutingContext ctx, int code, String quote) {
