@@ -145,4 +145,20 @@ class OpenAPITest {
                     testContext.completeNow();
                 }));
     }
+
+    @Test
+    void getTracks(final VertxTestContext testContext) {
+        webClient.get(PORT, HOST, "/api/tracks").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject body = array.getJsonObject(i);
+                        assertNotNull(body.getJsonObject("station1"));
+                        assertNotNull(body.getJsonObject("station2"));
+                    }
+                    testContext.completeNow();
+                }));
+    }
 }
