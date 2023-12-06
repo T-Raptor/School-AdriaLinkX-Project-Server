@@ -9,7 +9,7 @@ public interface TrackRepository {
     List<Track> getTracks();
     Track getTrack(int id);
 
-    Track insertTrack(String company, Station station1, Station station2);
-    Track updateTrack(int id, String company, Station station1, Station station2);
+    Track insertTrack(Station station1, Station station2);
+    Track updateTrack(int id, Station station1, Station station2);
     void deleteTrack(int id);
 }

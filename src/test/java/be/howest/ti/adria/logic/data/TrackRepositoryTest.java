@@ -34,7 +34,6 @@ public abstract class TrackRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(track);
-        Assertions.assertFalse(StringUtil.isNullOrEmpty(track.getCompany()));
         Assertions.assertNotNull(track.getStation1());
         Assertions.assertNotNull(track.getStation2());
     }
@@ -50,14 +49,12 @@ public abstract class TrackRepositoryTest {
         // Act
         Track track = repository.updateTrack(
                 id,
-                company,
                 station1,
                 station2
         );
 
         // Assert
         Assertions.assertNotNull(track);
-        Assertions.assertEquals(company, track.getCompany());
         Assertions.assertEquals(station1, track.getStation1());
         Assertions.assertEquals(station2, track.getStation2());
     }
@@ -70,11 +67,10 @@ public abstract class TrackRepositoryTest {
         Station station2 = stationRepository.getStation(1);
 
         // Act
-        Track track = repository.insertTrack(company, station1, station2);
+        Track track = repository.insertTrack(station1, station2);
 
         // Assert
         Assertions.assertNotNull(track);
-        Assertions.assertEquals(company, track.getCompany());
         Assertions.assertEquals(station1, track.getStation1());
         Assertions.assertEquals(station2, track.getStation2());
     }
@@ -82,10 +78,9 @@ public abstract class TrackRepositoryTest {
     @Test
     void deleteTrack() {
         // Arrange
-        String company = "Macrosoft";
         Station station1 = stationRepository.getStation(3);
         Station station2 = stationRepository.getStation(1);
-        Track track = repository.insertTrack(company, station1, station2);
+        Track track = repository.insertTrack(station1, station2);
 
         // Act
         repository.deleteTrack(track.getId());

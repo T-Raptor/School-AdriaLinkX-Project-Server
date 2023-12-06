@@ -308,12 +308,12 @@ public class H2Repository implements StationRepository, TrackRepository {
     }
 
     @Override
-    public Track insertTrack(String company, Station station1, Station station2) {
+    public Track insertTrack(Station station1, Station station2) {
         return null;
     }
 
     @Override
-    public Track updateTrack(int id, String company, Station station1, Station station2) {
+    public Track updateTrack(int id, Station station1, Station station2) {
         return null;
     }
 
