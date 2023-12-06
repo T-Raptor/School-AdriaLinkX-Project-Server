@@ -40,6 +40,7 @@ create table reservations
     observable_id int,
     period_start timestamp,
     period_stop timestamp,
+    company VARCHAR(255),
     primary key (observable_id),
     foreign key (observable_id) references observables(id)
 );
