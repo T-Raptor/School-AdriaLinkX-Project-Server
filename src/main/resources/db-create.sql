@@ -24,11 +24,11 @@ create table stations
 create table tracks
 (
     observable_id int,
-    station1 varchar(255),
-    station2 varchar(255),
+    station1 int,
+    station2 int,
     primary key (observable_id),
     foreign key (observable_id) references observables(id),
-    foreign key (station1) references stations(name),
-    foreign key (station2) references stations(name),
+    foreign key (station1) references stations(observable_id),
+    foreign key (station2) references stations(observable_id),
     unique key (station1, station2)
 );
