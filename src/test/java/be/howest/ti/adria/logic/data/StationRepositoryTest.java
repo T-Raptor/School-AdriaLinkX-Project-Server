@@ -80,12 +80,12 @@ public abstract class StationRepositoryTest {
     @Test
     void deleteStation() {
         // Arrange
-        int id = 1;
+        Station station = repository.insertStation("Auriga", 0, 0);
 
         // Act
-        repository.deleteStation(id);
+        repository.deleteStation(station.getId());
 
         // Assert
-        Assertions.assertNull(repository.getStation(id));
+        Assertions.assertNull(repository.getStation(station.getId()));
     }
 }
