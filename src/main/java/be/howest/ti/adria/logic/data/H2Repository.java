@@ -2,9 +2,11 @@ package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.Quote;
 import be.howest.ti.adria.logic.domain.Station;
+import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +26,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository {
+public class H2Repository implements StationRepository, TrackRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -292,5 +294,31 @@ public class H2Repository implements StationRepository {
                 SQL_DELETE_STATION,
                 stmt -> stmt.setInt(1, id)
         );
+    }
+
+
+    @Override
+    public List<Track> getTracks() {
+        return null;
+    }
+
+    @Override
+    public Track getTrack(int id) {
+        return null;
+    }
+
+    @Override
+    public Track insertTrack(String company, Station station1, Station station2) {
+        return null;
+    }
+
+    @Override
+    public Track updateTrack(int id, String company, Station station1, Station station2) {
+        return null;
+    }
+
+    @Override
+    public void deleteTrack(int id) {
+        throw new RepositoryException("Not yet implemented");
     }
 }
