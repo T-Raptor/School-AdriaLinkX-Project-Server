@@ -41,6 +41,7 @@ public class H2Repository implements StationRepository, TrackRepository {
     private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
 
     private static final String SQL_SELECT_TRACKS = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id;";
+    private static final String SQL_SELECT_TRACK = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id where t.observable_id = ?;";
 
     private final Server dbWebConsole;
     private final String username;
@@ -313,7 +314,15 @@ public class H2Repository implements StationRepository, TrackRepository {
 
     @Override
     public Track getTrack(int id) {
-        return null;
+        return getRow(
+                SQL_SELECT_TRACK,
+                stmt -> stmt.setInt(1, id),
+                rs -> {
+                    Station station1 = new Station(rs.getInt("s1_id"), rs.getString("s1_name"), rs.getDouble("s1_latitude"), rs.getDouble("s1_longitude"));
+                    Station station2 = new Station(rs.getInt("s2_id"), rs.getString("s2_name"), rs.getDouble("s2_latitude"), rs.getDouble("s2_longitude"));
+                    return new Track(rs.getInt("id"), station1, station2);
+                }
+        );
     }
 
     @Override
