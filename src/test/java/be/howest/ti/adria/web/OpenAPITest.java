@@ -4,7 +4,9 @@ import be.howest.ti.adria.logic.controller.MockController;
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.web.bridge.OpenApiBridge;
 import be.howest.ti.adria.web.bridge.RtcBridge;
+import io.netty.util.internal.StringUtil;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
@@ -13,8 +15,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(VertxExtension.class)
 @SuppressWarnings({"PMD.JUnitTestsShouldIncludeAssert","PMD.AvoidDuplicateLiterals"})
@@ -125,5 +126,41 @@ class OpenAPITest {
 
     private JsonObject createQuote(String quote) {
         return new JsonObject().put("quote", quote);
+    }
+
+
+    @Test
+    void getStations(final VertxTestContext testContext) {
+        webClient.get(PORT, HOST, "/api/stations").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject body = array.getJsonObject(i);
+                        assertFalse(StringUtil.isNullOrEmpty(body.getString("name")));
+                        assertNotNull(body.getDouble("latitude"));
+                        assertNotNull(body.getDouble("longitude"));
+                    }
+                    testContext.completeNow();
+                }));
+    }
+
+    @Test
+    void getTracks(final VertxTestContext testContext) {
+        webClient.get(PORT, HOST, "/api/tracks").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject body = array.getJsonObject(i);
+                        assertNotNull(body.getJsonObject("station1"));
+                        assertNotNull(body.getJsonObject("station2"));
+                    }
+                    testContext.completeNow();
+                }));
     }
 }

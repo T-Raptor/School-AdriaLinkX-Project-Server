@@ -4,6 +4,7 @@ import be.howest.ti.adria.logic.controller.DefaultController;
 import be.howest.ti.adria.logic.controller.Controller;
 import be.howest.ti.adria.logic.domain.Quote;
 import be.howest.ti.adria.logic.domain.Station;
+import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -53,6 +54,9 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: getStations");
         routerBuilder.operation("getStations").handler(this::getStations);
 
+        LOGGER.log(Level.INFO, "Installing handler for: getTracks");
+        routerBuilder.operation("getTracks").handler(this::getTracks);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
     }
@@ -97,6 +101,11 @@ public class OpenApiBridge {
     public void getStations(RoutingContext ctx) {
         List<Station> stations = controller.getStations();
         Response.sendStations(ctx, stations);
+    }
+
+    public void getTracks(RoutingContext ctx) {
+        List<Track> tracks = controller.getTracks();
+        Response.sendTracks(ctx, tracks);
     }
 
 
