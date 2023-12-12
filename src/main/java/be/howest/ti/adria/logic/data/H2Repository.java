@@ -2,6 +2,7 @@ package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.Quote;
 import be.howest.ti.adria.logic.domain.Station;
+import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
@@ -24,7 +25,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository {
+public class H2Repository implements StationRepository, TrackRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -38,6 +39,12 @@ public class H2Repository implements StationRepository {
     private static final String SQL_INSERT_STATION = "insert into stations values (?, ?, ?, ?);";
     private static final String SQL_UPDATE_STATION = "update stations set `name` = ?, `latitude` = ?, `longitude` = ? where observable_id = ?;";
     private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
+
+    private static final String SQL_SELECT_TRACKS = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id;";
+    private static final String SQL_SELECT_TRACK = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id where t.observable_id = ?;";
+    private static final String SQL_INSERT_TRACK = "insert into tracks values (?, ?, ?);";
+    private static final String SQL_UPDATE_TRACK = "update tracks set `station1` = ?, `station2` = ? where observable_id = ?;";
+    private static final String SQL_DELETE_TRACK = "delete from tracks where observable_id = ?;";
 
     private final Server dbWebConsole;
     private final String username;
@@ -290,6 +297,68 @@ public class H2Repository implements StationRepository {
     public void deleteStation(int id) {
         deleteRow(
                 SQL_DELETE_STATION,
+                stmt -> stmt.setInt(1, id)
+        );
+    }
+
+
+    @Override
+    public List<Track> getTracks() {
+        return getRows(
+                SQL_SELECT_TRACKS,
+                stmt -> { },
+                rs -> {
+                    Station station1 = new Station(rs.getInt("s1_id"), rs.getString("s1_name"), rs.getDouble("s1_latitude"), rs.getDouble("s1_longitude"));
+                    Station station2 = new Station(rs.getInt("s2_id"), rs.getString("s2_name"), rs.getDouble("s2_latitude"), rs.getDouble("s2_longitude"));
+                    return new Track(rs.getInt("id"), station1, station2);
+                }
+        );
+    }
+
+    @Override
+    public Track getTrack(int id) {
+        return getRow(
+                SQL_SELECT_TRACK,
+                stmt -> stmt.setInt(1, id),
+                rs -> {
+                    Station station1 = new Station(rs.getInt("s1_id"), rs.getString("s1_name"), rs.getDouble("s1_latitude"), rs.getDouble("s1_longitude"));
+                    Station station2 = new Station(rs.getInt("s2_id"), rs.getString("s2_name"), rs.getDouble("s2_latitude"), rs.getDouble("s2_longitude"));
+                    return new Track(rs.getInt("id"), station1, station2);
+                }
+        );
+    }
+
+    @Override
+    public Track insertTrack(Station station1, Station station2) {
+        int id = insertObservable();
+        return insertRow(
+                SQL_INSERT_TRACK,
+                stmt -> {
+                    stmt.setInt(1, id);
+                    stmt.setInt(2, station1.getId());
+                    stmt.setInt(3, station2.getId());
+                },
+                rs -> new Track(id, station1, station2)
+        );
+    }
+
+    @Override
+    public Track updateTrack(int id, Station station1, Station station2) {
+        updateRow(
+                SQL_UPDATE_TRACK,
+                stmt -> {
+                    stmt.setInt(1, station1.getId());
+                    stmt.setInt(2, station2.getId());
+                    stmt.setInt(3, id);
+                }
+        );
+        return new Track(id, station1, station2);
+    }
+
+    @Override
+    public void deleteTrack(int id) {
+        deleteRow(
+                SQL_DELETE_TRACK,
                 stmt -> stmt.setInt(1, id)
         );
     }
