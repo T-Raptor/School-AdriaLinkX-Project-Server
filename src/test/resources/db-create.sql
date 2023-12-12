@@ -34,3 +34,22 @@ create table tracks
     foreign key (station2) references stations(observable_id),
     unique key (station1, station2)
 );
+
+create table reservations
+(
+    observable_id int,
+    period_start timestamp,
+    period_stop timestamp,
+    company VARCHAR(255),
+    primary key (observable_id),
+    foreign key (observable_id) references observables(id)
+);
+
+create table reservation_tracks
+(
+    reservation int,
+    track int,
+    primary key (reservation, track),
+    foreign key (reservation) references reservations(observable_id),
+    foreign key (track) references tracks(observable_id)
+);
