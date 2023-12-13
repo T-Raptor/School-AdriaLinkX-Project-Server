@@ -53,3 +53,11 @@ create table reservation_tracks
     foreign key (reservation) references reservations(observable_id),
     foreign key (track) references tracks(observable_id)
 );
+
+create table shuttles
+(
+    observable_id int,
+    serial VARCHAR(25),
+    primary key (observable_id),
+    foreign key (observable_id) references observables(id)
+);
