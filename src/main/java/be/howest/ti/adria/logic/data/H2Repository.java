@@ -53,6 +53,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_DELETE_RESERVATION_TRACKS = "delete from reservation_tracks where reservation = ?;";
 
     private static final String SQL_SELECT_SHUTTLES = "select observable_id as id, serial from shuttles;";
+    private static final String SQL_SELECT_SHUTTLE = "select observable_id as id, serial from shuttles where observable_id = ?;";
 
 
     private final Server dbWebConsole;
@@ -464,7 +465,11 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Shuttle getShuttle(int id) {
-        return null;
+        return getRow(
+                SQL_SELECT_SHUTTLE,
+                stmt -> stmt.setInt(1, id),
+                rs -> new Shuttle(rs.getInt("id"), rs.getString("serial"))
+        );
     }
 
     @Override
