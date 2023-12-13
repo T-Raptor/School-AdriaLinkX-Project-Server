@@ -47,6 +47,11 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_UPDATE_TRACK = "update tracks set `station1` = ?, `station2` = ? where observable_id = ?;";
     private static final String SQL_DELETE_TRACK = "delete from tracks where observable_id = ?;";
 
+    private static final String SQL_SELECT_RESERVATIONS = "select observable_id as id, period_start, period_stop, company from reservations;";
+    private static final String SQL_SELECT_RESERVATION_TRACKS = "select reservation, track from reservation_tracks where reservation = ?;";
+
+
+
     private final Server dbWebConsole;
     private final String username;
     private final String password;
@@ -365,9 +370,24 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
 
+    private List<Track> getReservationTracks(int reservationId) {
+        return getRows(
+                SQL_SELECT_RESERVATION_TRACKS,
+                stmt -> stmt.setInt(1, reservationId),
+                rs -> getTrack(rs.getInt("track"))
+        );
+    }
     @Override
     public List<Reservation> getReservations() {
-        return new ArrayList<>();
+        return getRows(
+                SQL_SELECT_RESERVATIONS,
+                stmt -> { },
+                rs -> {
+                    int reservationId = rs.getInt("id");
+                    List<Track> route = getReservationTracks(reservationId);
+                    return new Reservation(reservationId, rs.getTimestamp("period_start"), rs.getTimestamp("period_stop"), rs.getString("company"), route);
+                }
+        );
     }
 
     @Override
