@@ -1,9 +1,6 @@
 package be.howest.ti.adria.logic.data;
 
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
@@ -26,7 +23,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -451,5 +448,21 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 SQL_DELETE_RESERVATION,
                 stmt -> stmt.setInt(1, id)
         );
+    }
+
+
+    @Override
+    public List<Shuttle> getShuttles() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Shuttle getShuttle(int id) {
+        return null;
+    }
+
+    @Override
+    public Shuttle insertShuttle(String serial) {
+        return null;
     }
 }
