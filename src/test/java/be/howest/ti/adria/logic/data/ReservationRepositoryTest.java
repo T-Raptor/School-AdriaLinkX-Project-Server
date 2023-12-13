@@ -46,32 +46,6 @@ public abstract class ReservationRepositoryTest {
     }
 
     @Test
-    void updateReservation() {
-        // Arrange
-        int id = 7;
-        String company = "Macrosoft";
-        Timestamp periodStart = new Timestamp(2024, 9, 12, 20, 0, 0, 0);
-        Timestamp periodStop = new Timestamp(2024, 9, 12, 23, 0, 0, 0);
-        List<Track> route = trackRepository.getTracks();
-
-        // Act
-        Reservation reservation = repository.updateReservation(
-                id,
-                periodStart,
-                periodStop,
-                company,
-                route
-        );
-
-        // Assert
-        Assertions.assertNotNull(reservation);
-        Assertions.assertEquals(company, reservation.getCompany());
-        Assertions.assertEquals(periodStart, reservation.getPeriodStart());
-        Assertions.assertEquals(periodStop, reservation.getPeriodStop());
-        Assertions.assertEquals(route, reservation.getRoute());
-    }
-
-    @Test
     void insertReservation() {
         // Arrange
         String company = "Macrosoft";

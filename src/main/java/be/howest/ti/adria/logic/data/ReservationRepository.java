@@ -11,6 +11,5 @@ public interface ReservationRepository {
     Reservation getReservation(int id);
 
     Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route);
-    Reservation updateReservation(int id, Timestamp periodStart, Timestamp periodStop, String company, List<Track> route);
     void deleteReservation(int id);
 }

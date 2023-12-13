@@ -54,8 +54,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_INSERT_RESERVATION_TRACK = "insert into reservation_tracks values (?, ?);";
 
 
-
-
     private final Server dbWebConsole;
     private final String username;
     private final String password;
@@ -436,11 +434,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
 
         return reservation;
-    }
-
-    @Override
-    public Reservation updateReservation(int id, Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
-        return null;
     }
 
     @Override
