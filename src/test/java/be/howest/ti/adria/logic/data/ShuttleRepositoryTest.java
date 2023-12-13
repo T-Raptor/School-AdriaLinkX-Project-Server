@@ -1,7 +1,6 @@
 package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.Shuttle;
-import be.howest.ti.adria.logic.domain.Station;
 import io.netty.util.internal.StringUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
