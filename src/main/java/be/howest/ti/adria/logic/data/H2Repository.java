@@ -49,6 +49,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     private static final String SQL_SELECT_RESERVATIONS = "select observable_id as id, period_start, period_stop, company from reservations;";
     private static final String SQL_SELECT_RESERVATION_TRACKS = "select reservation, track from reservation_tracks where reservation = ?;";
+    private static final String SQL_SELECT_RESERVATION = "select observable_id as id, period_start, period_stop, company from reservations where observable_id = ?;";
 
 
 
@@ -392,7 +393,15 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Reservation getReservation(int id) {
-        return null;
+        return getRow(
+                SQL_SELECT_RESERVATION,
+                stmt -> stmt.setInt(1, id),
+                rs -> {
+                    int reservationId = rs.getInt("id");
+                    List<Track> route = getReservationTracks(reservationId);
+                    return new Reservation(reservationId, rs.getTimestamp("period_start"), rs.getTimestamp("period_stop"), rs.getString("company"), route);
+                }
+        );
     }
 
     @Override

@@ -32,7 +32,7 @@ public abstract class ReservationRepositoryTest {
     @Test
     void getReservation() {
         // Arrange
-        int id = 4;
+        int id = 7;
 
         // Act
         Reservation reservation = repository.getReservation(id);
@@ -48,7 +48,7 @@ public abstract class ReservationRepositoryTest {
     @Test
     void updateReservation() {
         // Arrange
-        int id = 4;
+        int id = 7;
         String company = "Macrosoft";
         Timestamp periodStart = new Timestamp(2024, 9, 12, 20, 0, 0, 0);
         Timestamp periodStop = new Timestamp(2024, 9, 12, 23, 0, 0, 0);
