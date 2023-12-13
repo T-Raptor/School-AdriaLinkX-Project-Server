@@ -54,6 +54,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     private static final String SQL_SELECT_SHUTTLES = "select observable_id as id, serial from shuttles;";
     private static final String SQL_SELECT_SHUTTLE = "select observable_id as id, serial from shuttles where observable_id = ?;";
+    private static final String SQL_INSERT_SHUTTLE = "insert into shuttles values (?, ?);";
 
 
     private final Server dbWebConsole;
@@ -474,6 +475,14 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Shuttle insertShuttle(String serial) {
-        return null;
+        int id = insertObservable();
+        return insertRow(
+                SQL_INSERT_SHUTTLE,
+                stmt -> {
+                    stmt.setInt(1, id);
+                    stmt.setString(2, serial);
+                },
+                rs -> new Shuttle(id, serial)
+        );
     }
 }
