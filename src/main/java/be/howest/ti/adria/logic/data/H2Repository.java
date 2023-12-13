@@ -50,6 +50,9 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_SELECT_RESERVATIONS = "select observable_id as id, period_start, period_stop, company from reservations;";
     private static final String SQL_SELECT_RESERVATION_TRACKS = "select reservation, track from reservation_tracks where reservation = ?;";
     private static final String SQL_SELECT_RESERVATION = "select observable_id as id, period_start, period_stop, company from reservations where observable_id = ?;";
+    private static final String SQL_INSERT_RESERVATION = "insert into reservations values (?, ?, ?, ?);";
+    private static final String SQL_INSERT_RESERVATION_TRACK = "insert into reservation_tracks values (?, ?);";
+
 
 
 
@@ -404,9 +407,35 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
 
+    private boolean insertReservationTrack(int reservationId, int trackId) {
+        return insertRow(
+                SQL_INSERT_RESERVATION_TRACK,
+                stmt -> {
+                    stmt.setInt(1, reservationId);
+                    stmt.setInt(2, trackId);
+                },
+                rs -> true
+        );
+    }
     @Override
     public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
-        return null;
+        int id = insertObservable();
+        Reservation reservation = insertRow(
+                SQL_INSERT_RESERVATION,
+                stmt -> {
+                    stmt.setInt(1, id);
+                    stmt.setTimestamp(2, periodStart);
+                    stmt.setTimestamp(3, periodStop);
+                    stmt.setString(4, company);
+                },
+                rs -> new Reservation(id, periodStart, periodStop, company, route)
+        );
+
+        for (Track track : route) {
+            insertReservationTrack(id, track.getId());
+        }
+
+        return reservation;
     }
 
     @Override
