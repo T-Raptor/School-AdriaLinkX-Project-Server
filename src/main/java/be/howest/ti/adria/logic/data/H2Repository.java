@@ -52,6 +52,8 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_SELECT_RESERVATION = "select observable_id as id, period_start, period_stop, company from reservations where observable_id = ?;";
     private static final String SQL_INSERT_RESERVATION = "insert into reservations values (?, ?, ?, ?);";
     private static final String SQL_INSERT_RESERVATION_TRACK = "insert into reservation_tracks values (?, ?);";
+    private static final String SQL_DELETE_RESERVATION = "delete from reservations where observable_id = ?;";
+    private static final String SQL_DELETE_RESERVATION_TRACKS = "delete from reservation_tracks where reservation = ?;";
 
 
     private final Server dbWebConsole;
@@ -436,8 +438,18 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         return reservation;
     }
 
+    private void deleteReservationTracks(int reservationId) {
+        deleteRow(
+                SQL_DELETE_RESERVATION_TRACKS,
+                stmt -> stmt.setInt(1, reservationId)
+        );
+    }
     @Override
     public void deleteReservation(int id) {
-        throw new UnsupportedOperationException();
+        deleteReservationTracks(id);
+        deleteRow(
+                SQL_DELETE_RESERVATION,
+                stmt -> stmt.setInt(1, id)
+        );
     }
 }
