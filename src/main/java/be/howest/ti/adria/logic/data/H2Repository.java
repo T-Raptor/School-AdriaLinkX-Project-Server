@@ -1,9 +1,6 @@
 package be.howest.ti.adria.logic.data;
 
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
@@ -26,7 +23,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -54,6 +51,10 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_INSERT_RESERVATION_TRACK = "insert into reservation_tracks values (?, ?);";
     private static final String SQL_DELETE_RESERVATION = "delete from reservations where observable_id = ?;";
     private static final String SQL_DELETE_RESERVATION_TRACKS = "delete from reservation_tracks where reservation = ?;";
+
+    private static final String SQL_SELECT_SHUTTLES = "select observable_id as id, serial from shuttles;";
+    private static final String SQL_SELECT_SHUTTLE = "select observable_id as id, serial from shuttles where observable_id = ?;";
+    private static final String SQL_INSERT_SHUTTLE = "insert into shuttles values (?, ?);";
 
 
     private final Server dbWebConsole;
@@ -450,6 +451,38 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         deleteRow(
                 SQL_DELETE_RESERVATION,
                 stmt -> stmt.setInt(1, id)
+        );
+    }
+
+
+    @Override
+    public List<Shuttle> getShuttles() {
+        return getRows(
+                SQL_SELECT_SHUTTLES,
+                stmt -> { },
+                rs -> new Shuttle(rs.getInt("id"), rs.getString("serial"))
+        );
+    }
+
+    @Override
+    public Shuttle getShuttle(int id) {
+        return getRow(
+                SQL_SELECT_SHUTTLE,
+                stmt -> stmt.setInt(1, id),
+                rs -> new Shuttle(rs.getInt("id"), rs.getString("serial"))
+        );
+    }
+
+    @Override
+    public Shuttle insertShuttle(String serial) {
+        int id = insertObservable();
+        return insertRow(
+                SQL_INSERT_SHUTTLE,
+                stmt -> {
+                    stmt.setInt(1, id);
+                    stmt.setString(2, serial);
+                },
+                rs -> new Shuttle(id, serial)
         );
     }
 }
