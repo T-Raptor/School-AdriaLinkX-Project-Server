@@ -1,6 +1,7 @@
 package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
@@ -25,7 +26,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -361,5 +362,31 @@ public class H2Repository implements StationRepository, TrackRepository {
                 SQL_DELETE_TRACK,
                 stmt -> stmt.setInt(1, id)
         );
+    }
+
+
+    @Override
+    public List<Reservation> getReservations() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Reservation getReservation(int id) {
+        return null;
+    }
+
+    @Override
+    public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
+        return null;
+    }
+
+    @Override
+    public Reservation updateReservation(int id, Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
+        return null;
+    }
+
+    @Override
+    public void deleteReservation(int id) {
+        throw new UnsupportedOperationException();
     }
 }
