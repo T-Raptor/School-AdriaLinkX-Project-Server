@@ -110,10 +110,8 @@ public class OpenApiBridge {
 
     public void createReservation(RoutingContext ctx) {
         Request request = Request.from(ctx);
-        String ID = request.getReservation();
-        int reservationId = request.getReservationId();
 
-        Response.sendReservationCreated(ctx, controller.createReservation(reservationId, reservation));
+        Response.sendReservationCreated(ctx, controller.createReservation());
     }
 
 

@@ -7,7 +7,6 @@ import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -80,10 +79,8 @@ public class DefaultController implements Controller {
     }
 
     @Override
-    public Reservation createReservation(int reservationId, String reservation) {
-        if (StringUtils.isBlank(reservation))
-            throw new IllegalArgumentException("An empty reservation is not allowed.");
+    public Reservation createReservation() {
+        return Repositories.getH2Repo().insertReservation();
 
-        return Repositories.getH2Repo().insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route);
     }
 }

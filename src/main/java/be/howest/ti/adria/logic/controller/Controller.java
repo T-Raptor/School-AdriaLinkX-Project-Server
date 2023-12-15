@@ -23,5 +23,6 @@ public interface Controller {
 
     List<Track> getTracks();
 
-    Reservation createReservation(int reservationId, String reservation);
+    Reservation createReservation();
+
 }
