@@ -61,6 +61,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_INSERT_SHUTTLE = "insert into shuttles values (?, ?);";
 
     private static final String SQL_SELECT_EVENTS = "select * from events;";
+    private static final String SQL_SELECT_EVENT = "select * from events where id = ?;";
 
 
     private final Server dbWebConsole;
@@ -519,13 +520,36 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                             return new Event(id, observable, moment, subject, reason);
                         }
                     }
-
                 });
     }
 
     @Override
     public Event getEvent(int id) {
-        return null;
+        return getRow(
+                SQL_SELECT_EVENT,
+                stmt -> stmt.setInt(1, id),
+                rs -> {
+                    int idRemote = rs.getInt("id");
+                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Timestamp moment = rs.getTimestamp("moment");
+                    String subject = rs.getString("class");
+                    String reason = rs.getString("reason");
+                    if (rs.getBoolean("local")) {
+                        double latitude = rs.getDouble(COLUMN_LATITUDE);
+                        double longitude = rs.getDouble(COLUMN_LONGITUDE);
+                        if (reason == null) {
+                            return new LocalEvent(idRemote, observable, moment, subject, latitude, longitude);
+                        } else {
+                            return new LocalEvent(idRemote, observable, moment, subject, latitude, longitude, reason);
+                        }
+                    } else {
+                        if (reason == null) {
+                            return new Event(idRemote, observable, moment, subject);
+                        } else {
+                            return new Event(idRemote, observable, moment, subject, reason);
+                        }
+                    }
+                });
     }
 
     @Override
