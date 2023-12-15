@@ -1,6 +1,7 @@
 package be.howest.ti.adria.web.bridge;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.web.exceptions.BridgeException;
@@ -93,6 +94,17 @@ public class Response {
         } catch (JsonProcessingException e) {
             LOGGER.log(Level.SEVERE, "Error occurred while attempting to send tracks", e);
             throw new BridgeException("Error occurred while attempting to send tracks");
+        }
+    }
+
+    public static void sendReservation(RoutingContext ctx, List<Reservation> reservations) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonArray = objectMapper.writeValueAsString(reservations);
+            sendOkJsonResponse(ctx, jsonArray);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while attempting to send reservations", e);
+            throw new BridgeException("Error occurred while attempting to send reservations");
         }
     }
 }
