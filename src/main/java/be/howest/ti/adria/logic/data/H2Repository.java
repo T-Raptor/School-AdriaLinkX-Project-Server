@@ -23,7 +23,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
@@ -484,5 +484,36 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 },
                 rs -> new Shuttle(id, serial)
         );
+    }
+
+
+    @Override
+    public List<Event> getEvents() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Event getEvent(int id) {
+        return null;
+    }
+
+    @Override
+    public Event insertEvent(Observable target, Timestamp moment, String what) {
+        return null;
+    }
+
+    @Override
+    public Event insertEvent(Observable target, Timestamp moment, String what, String reason) {
+        return null;
+    }
+
+    @Override
+    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude) {
+        return null;
+    }
+
+    @Override
+    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude, String reason) {
+        return null;
     }
 }
