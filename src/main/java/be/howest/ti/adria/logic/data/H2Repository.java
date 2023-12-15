@@ -56,6 +56,8 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_SELECT_SHUTTLE = "select observable_id as id, serial from shuttles where observable_id = ?;";
     private static final String SQL_INSERT_SHUTTLE = "insert into shuttles values (?, ?);";
 
+    private static final String SQL_SELECT_EVENTS = "select * from events;";
+
 
     private final Server dbWebConsole;
     private final String username;
@@ -489,7 +491,18 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public List<Event> getEvents() {
-        return new ArrayList<>();
+        return getRows(
+                SQL_SELECT_EVENTS,
+                stmt -> { },
+                rs -> {
+                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    String reason = rs.getString("reason");
+                    if (reason == null) {
+                        return new Event(rs.getInt("id"), observable, rs.getTimestamp("moment"), rs.getString("class"));
+                    } else {
+                        return new Event(rs.getInt("id"), observable, rs.getTimestamp("moment"), rs.getString("class"), reason);
+                    }
+                });
     }
 
     @Override
