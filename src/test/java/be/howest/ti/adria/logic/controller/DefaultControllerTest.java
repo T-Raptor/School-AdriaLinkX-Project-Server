@@ -2,6 +2,7 @@ package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import io.vertx.core.json.JsonObject;
@@ -165,5 +166,18 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(tracks);
         assertFalse(tracks.isEmpty());
+    }
+
+    @Test
+    void getReservations() {
+        // Arrange
+        Controller sut = new DefaultController();
+
+        // Act
+        List<Reservation> reservations = sut.getReservations();
+
+        //Assert
+        assertNotNull(reservations);
+        assertFalse(reservations.isEmpty());
     }
 }

@@ -1,9 +1,11 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,5 +48,13 @@ public class MockController implements Controller {
                 new Station(1, "Bdria", 47.03051037331985, 2.286659149568905))
         );
         return tracks;
+    }
+
+    @Override
+    public List<Reservation> getReservations() {
+        List<Reservation> reservations = new ArrayList<>();
+        reservations.add(new Reservation(7, Timestamp.valueOf("2022-05-08 14:30:00"), Timestamp.valueOf("2022-05-08 18:30:00"), "Hoogle", getTracks()));
+        reservations.add(new Reservation(8, Timestamp.valueOf("2022-05-12 9:30:00"), Timestamp.valueOf("2022-05-09 11:30:00"), "Macrosoft", getTracks()));
+        return reservations;
     }
 }
