@@ -65,6 +65,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_INSERT_EVENT = "insert into events (target, moment, class) values (?, ?, ?);";
     private static final String SQL_INSERT_EVENT_WITH_REASON = "insert into events (target, moment, class, reason) values (?, ?, ?, ?);";
     private static final String SQL_INSERT_LOCAL_EVENT = "insert into events (target, moment, class, local, latitude, longitude) values (?, ?, ?, true, ?, ?);";
+    private static final String SQL_INSERT_LOCAL_EVENT_WITH_REASON = "insert into events (target, moment, class, local, latitude, longitude, reason) values (?, ?, ?, true, ?, ?, ?);";
 
 
     private final Server dbWebConsole;
@@ -599,6 +600,17 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude, String reason) {
-        return null;
+        return insertRow(
+                SQL_INSERT_LOCAL_EVENT_WITH_REASON,
+                stmt -> {
+                    stmt.setInt(1, target.getId());
+                    stmt.setTimestamp(2, moment);
+                    stmt.setString(3, what);
+                    stmt.setDouble(4, latitude);
+                    stmt.setDouble(5, longitude);
+                    stmt.setString(6, reason);
+                },
+                rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude, reason)
+        );
     }
 }
