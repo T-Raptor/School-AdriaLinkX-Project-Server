@@ -23,8 +23,12 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
+
+    private static final String COLUMN_LATITUDE = "latitude";
+    private static final String COLUMN_LONGITUDE = "longitude";
+
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
     private static final String SQL_UPDATE_QUOTE = "update quotes set quote = ? where id = ?;";
@@ -55,6 +59,13 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_SELECT_SHUTTLES = "select observable_id as id, serial from shuttles;";
     private static final String SQL_SELECT_SHUTTLE = "select observable_id as id, serial from shuttles where observable_id = ?;";
     private static final String SQL_INSERT_SHUTTLE = "insert into shuttles values (?, ?);";
+
+    private static final String SQL_SELECT_EVENTS = "select * from events;";
+    private static final String SQL_SELECT_EVENT = "select * from events where id = ?;";
+    private static final String SQL_INSERT_EVENT = "insert into events (target, moment, class) values (?, ?, ?);";
+    private static final String SQL_INSERT_EVENT_WITH_REASON = "insert into events (target, moment, class, reason) values (?, ?, ?, ?);";
+    private static final String SQL_INSERT_LOCAL_EVENT = "insert into events (target, moment, class, local, latitude, longitude) values (?, ?, ?, true, ?, ?);";
+    private static final String SQL_INSERT_LOCAL_EVENT_WITH_REASON = "insert into events (target, moment, class, local, latitude, longitude, reason) values (?, ?, ?, true, ?, ?, ?);";
 
 
     private final Server dbWebConsole;
@@ -262,7 +273,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         return getRows(
                 SQL_SELECT_STATIONS,
                 stmt -> { },
-                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble(COLUMN_LATITUDE), rs.getDouble(COLUMN_LONGITUDE))
         );
     }
 
@@ -271,7 +282,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         return getRow(
                 SQL_SELECT_STATION,
                 stmt -> stmt.setInt(1, id),
-                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble(COLUMN_LATITUDE), rs.getDouble(COLUMN_LONGITUDE))
         );
     }
 
@@ -483,6 +494,123 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setString(2, serial);
                 },
                 rs -> new Shuttle(id, serial)
+        );
+    }
+
+
+    @Override
+    public List<Event> getEvents() {
+        return getRows(
+                SQL_SELECT_EVENTS,
+                stmt -> { },
+                rs -> {
+                    int id = rs.getInt("id");
+                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Timestamp moment = rs.getTimestamp("moment");
+                    String subject = rs.getString("class");
+                    String reason = rs.getString("reason");
+                    if (rs.getBoolean("local")) {
+                        double latitude = rs.getDouble(COLUMN_LATITUDE);
+                        double longitude = rs.getDouble(COLUMN_LONGITUDE);
+                        if (reason == null) {
+                            return new LocalEvent(id, observable, moment, subject, latitude, longitude);
+                        } else {
+                            return new LocalEvent(id, observable, moment, subject, latitude, longitude, reason);
+                        }
+                    } else {
+                        if (reason == null) {
+                            return new Event(id, observable, moment, subject);
+                        } else {
+                            return new Event(id, observable, moment, subject, reason);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public Event getEvent(int id) {
+        return getRow(
+                SQL_SELECT_EVENT,
+                stmt -> stmt.setInt(1, id),
+                rs -> {
+                    int idRemote = rs.getInt("id");
+                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Timestamp moment = rs.getTimestamp("moment");
+                    String subject = rs.getString("class");
+                    String reason = rs.getString("reason");
+                    if (rs.getBoolean("local")) {
+                        double latitude = rs.getDouble(COLUMN_LATITUDE);
+                        double longitude = rs.getDouble(COLUMN_LONGITUDE);
+                        if (reason == null) {
+                            return new LocalEvent(idRemote, observable, moment, subject, latitude, longitude);
+                        } else {
+                            return new LocalEvent(idRemote, observable, moment, subject, latitude, longitude, reason);
+                        }
+                    } else {
+                        if (reason == null) {
+                            return new Event(idRemote, observable, moment, subject);
+                        } else {
+                            return new Event(idRemote, observable, moment, subject, reason);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public Event insertEvent(Observable target, Timestamp moment, String what) {
+        return insertRow(
+                SQL_INSERT_EVENT,
+                stmt -> {
+                    stmt.setInt(1, target.getId());
+                    stmt.setTimestamp(2, moment);
+                    stmt.setString(3, what);
+                },
+                rs -> new Event(rs.getInt("id"), target, moment, what)
+        );
+    }
+
+    @Override
+    public Event insertEvent(Observable target, Timestamp moment, String what, String reason) {
+        return insertRow(
+                SQL_INSERT_EVENT_WITH_REASON,
+                stmt -> {
+                    stmt.setInt(1, target.getId());
+                    stmt.setTimestamp(2, moment);
+                    stmt.setString(3, what);
+                    stmt.setString(4, reason);
+                },
+                rs -> new Event(rs.getInt("id"), target, moment, what, reason)
+        );
+    }
+
+    @Override
+    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude) {
+        return insertRow(
+                SQL_INSERT_LOCAL_EVENT,
+                stmt -> {
+                    stmt.setInt(1, target.getId());
+                    stmt.setTimestamp(2, moment);
+                    stmt.setString(3, what);
+                    stmt.setDouble(4, latitude);
+                    stmt.setDouble(5, longitude);
+                },
+                rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude)
+        );
+    }
+
+    @Override
+    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude, String reason) {
+        return insertRow(
+                SQL_INSERT_LOCAL_EVENT_WITH_REASON,
+                stmt -> {
+                    stmt.setInt(1, target.getId());
+                    stmt.setTimestamp(2, moment);
+                    stmt.setString(3, what);
+                    stmt.setDouble(4, latitude);
+                    stmt.setDouble(5, longitude);
+                    stmt.setString(6, reason);
+                },
+                rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude, reason)
         );
     }
 }
