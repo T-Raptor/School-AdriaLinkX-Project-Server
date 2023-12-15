@@ -69,16 +69,11 @@ create table events
     moment timestamp not null,
     class varchar(50) not null,
     reason varchar(255) null,
+
     local boolean not null default false,
+    latitude double null,
+    longitude double null,
+
     primary key (id),
     foreign key (target) references observables(id)
-);
-
-create table events_local
-(
-    id int not null,
-    latitude double not null,
-    longitude double not null,
-    primary key (id),
-    foreign key (id) references events(id)
 );
