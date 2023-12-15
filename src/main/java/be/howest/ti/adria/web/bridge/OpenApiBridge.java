@@ -3,6 +3,7 @@ package be.howest.ti.adria.web.bridge;
 import be.howest.ti.adria.logic.controller.DefaultController;
 import be.howest.ti.adria.logic.controller.Controller;
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
@@ -57,6 +58,9 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: getTracks");
         routerBuilder.operation("getTracks").handler(this::getTracks);
 
+        LOGGER.log(Level.INFO, "Installing handler for: getReservations");
+        routerBuilder.operation("getReservations").handler(this::getReservations);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
     }
@@ -106,6 +110,11 @@ public class OpenApiBridge {
     public void getTracks(RoutingContext ctx) {
         List<Track> tracks = controller.getTracks();
         Response.sendTracks(ctx, tracks);
+    }
+
+    public void getReservations(RoutingContext ctx) {
+        List<Reservation> reservations = controller.getReservations();
+        Response.sendReservations(ctx, reservations);
     }
 
 
