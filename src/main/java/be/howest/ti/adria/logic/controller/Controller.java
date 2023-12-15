@@ -1,6 +1,7 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 
@@ -19,4 +20,6 @@ public interface Controller {
     List<Station> getStations();
 
     List<Track> getTracks();
+
+    List<Reservation> getReservations();
 }

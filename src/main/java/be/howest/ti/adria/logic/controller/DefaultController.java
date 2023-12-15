@@ -2,6 +2,7 @@ package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import org.apache.commons.lang3.StringUtils;
@@ -70,5 +71,10 @@ public class DefaultController implements Controller {
     @Override
     public List<Track> getTracks() {
         return Repositories.getH2Repo().getTracks();
+    }
+
+    @Override
+    public List<Reservation> getReservations() {
+        return Repositories.getH2Repo().getReservations();
     }
 }
