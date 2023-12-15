@@ -25,6 +25,10 @@ To make this class useful, please complete it with the topics seen in the module
 
 public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
+
+    private static final String COLUMN_LATITUDE = "latitude";
+    private static final String COLUMN_LONGITUDE = "longitude";
+
     private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
     private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
     private static final String SQL_UPDATE_QUOTE = "update quotes set quote = ? where id = ?;";
@@ -264,7 +268,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         return getRows(
                 SQL_SELECT_STATIONS,
                 stmt -> { },
-                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble(COLUMN_LATITUDE), rs.getDouble(COLUMN_LONGITUDE))
         );
     }
 
@@ -273,7 +277,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         return getRow(
                 SQL_SELECT_STATION,
                 stmt -> stmt.setInt(1, id),
-                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"))
+                rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble(COLUMN_LATITUDE), rs.getDouble(COLUMN_LONGITUDE))
         );
     }
 
@@ -495,13 +499,27 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 SQL_SELECT_EVENTS,
                 stmt -> { },
                 rs -> {
+                    int id = rs.getInt("id");
                     Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Timestamp moment = rs.getTimestamp("moment");
+                    String subject = rs.getString("class");
                     String reason = rs.getString("reason");
-                    if (reason == null) {
-                        return new Event(rs.getInt("id"), observable, rs.getTimestamp("moment"), rs.getString("class"));
+                    if (rs.getBoolean("local")) {
+                        double latitude = rs.getDouble(COLUMN_LATITUDE);
+                        double longitude = rs.getDouble(COLUMN_LONGITUDE);
+                        if (reason == null) {
+                            return new LocalEvent(id, observable, moment, subject, latitude, longitude);
+                        } else {
+                            return new LocalEvent(id, observable, moment, subject, latitude, longitude, reason);
+                        }
                     } else {
-                        return new Event(rs.getInt("id"), observable, rs.getTimestamp("moment"), rs.getString("class"), reason);
+                        if (reason == null) {
+                            return new Event(id, observable, moment, subject);
+                        } else {
+                            return new Event(id, observable, moment, subject, reason);
+                        }
                     }
+
                 });
     }
 
