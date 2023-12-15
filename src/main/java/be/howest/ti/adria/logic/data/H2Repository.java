@@ -62,6 +62,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     private static final String SQL_SELECT_EVENTS = "select * from events;";
     private static final String SQL_SELECT_EVENT = "select * from events where id = ?;";
+    private static final String SQL_INSERT_EVENT = "insert into events (target, moment, class) values (?, ?, ?);";
 
 
     private final Server dbWebConsole;
@@ -554,7 +555,15 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Event insertEvent(Observable target, Timestamp moment, String what) {
-        return null;
+        return insertRow(
+                SQL_INSERT_EVENT,
+                stmt -> {
+                    stmt.setInt(1, target.getId());
+                    stmt.setTimestamp(2, moment);
+                    stmt.setString(3, what);
+                },
+                rs -> new Event(rs.getInt("id"), target, moment, what)
+        );
     }
 
     @Override
