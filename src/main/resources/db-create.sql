@@ -59,3 +59,24 @@ create table shuttles
     primary key (observable_id),
     foreign key (observable_id) references observables(id)
 );
+
+create table events
+(
+    id int auto_increment not null,
+    target int not null,
+    moment timestamp not null,
+    class varchar(50) not null,
+    reason varchar(255) null,
+    local boolean not null default false,
+    primary key (id),
+    foreign key (target) references observables(id)
+);
+
+create table events_local
+(
+    id int not null,
+    latitude double not null,
+    longitude double not null,
+    primary key (id),
+    foreign key (id) references events(id)
+);
