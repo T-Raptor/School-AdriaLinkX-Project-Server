@@ -5,6 +5,7 @@ import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface Controller {
@@ -23,6 +24,5 @@ public interface Controller {
 
     List<Track> getTracks();
 
-    Reservation createReservation();
-
+    Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route);
 }

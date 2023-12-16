@@ -1,10 +1,13 @@
 package be.howest.ti.adria.web.bridge;
 
+import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.validation.RequestParameters;
 import io.vertx.ext.web.validation.ValidationHandler;
 
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +35,9 @@ public class Request {
     public static final String SPEC_QUOTE_ID = "quoteId";
     public static final String SPEC_QUOTE = "quote";
     private final RequestParameters params;
+    private Timestamp periodStart;
+    private Timestamp periodStop;
+    private List<Track> route;
 
     public static Request from(RoutingContext ctx) {
         return new Request(ctx);
@@ -54,5 +60,37 @@ public class Request {
             LOGGER.log(Level.INFO, "Unable to decipher the data in the body", ex);
             throw new MalformedRequestException("Unable to decipher the data in the request body. See logs for details.");
         }
+    }
+
+    public boolean bodyIsEmpty() {
+        return params.body().isEmpty();
+    }
+
+    public Timestamp getPeriodStart() {
+        return periodStart;
+    }
+
+    public void setPeriodStart(Timestamp periodStart) {
+        this.periodStart = periodStart;
+    }
+
+    public Timestamp getPeriodStop() {
+        return periodStop;
+    }
+
+    public void setPeriodStop(Timestamp periodStop) {
+        this.periodStop = periodStop;
+    }
+
+    public String getCompany() {
+        return null;
+    }
+
+    public List<Track> getRoute() {
+        return route;
+    }
+
+    public void setRoute(List<Track> route) {
+        this.route = route;
     }
 }

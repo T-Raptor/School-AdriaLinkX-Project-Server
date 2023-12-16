@@ -12,4 +12,8 @@ public interface ReservationRepository {
 
     Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route);
     void deleteReservation(int id);
+
+    Reservation insertReservation();
+
+    ;
 }

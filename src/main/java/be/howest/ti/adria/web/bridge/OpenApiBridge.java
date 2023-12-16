@@ -3,6 +3,7 @@ package be.howest.ti.adria.web.bridge;
 import be.howest.ti.adria.logic.controller.DefaultController;
 import be.howest.ti.adria.logic.controller.Controller;
 import be.howest.ti.adria.logic.domain.Quote;
+import be.howest.ti.adria.logic.domain.Reservation;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
@@ -12,6 +13,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -59,6 +61,8 @@ public class OpenApiBridge {
 
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
+
+
     }
 
     public OpenApiBridge() {
@@ -108,10 +112,26 @@ public class OpenApiBridge {
         Response.sendTracks(ctx, tracks);
     }
 
-    public void createReservation(RoutingContext ctx) {
-        Request request = Request.from(ctx);
+    public void insertReservation(RoutingContext ctx) {
+        try {
+            // Extract data from the request
+            Request request = Request.from(ctx);
+            if (!request.bodyIsEmpty()) {
+                Timestamp periodStart = request.getPeriodStart();
+                Timestamp periodStop = request.getPeriodStop();
+                String company = request.getCompany();
+                List<Track> route = request.getRoute();
 
-        Response.sendReservationCreated(ctx, controller.createReservation());
+                // Create the reservation
+                Reservation reservation = controller.insertReservation(periodStart, periodStop, company, route);
+
+                // Send the reservation back to the client
+                Response.sendReservationCreated(ctx, reservation);
+            }
+                throw new MalformedRequestException("Request body is not empty");
+        } catch (Exception e) {
+            Response.sendFailure(ctx, 400, e.getMessage());
+        }
     }
 
 

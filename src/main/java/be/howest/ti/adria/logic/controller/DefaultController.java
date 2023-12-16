@@ -7,6 +7,7 @@ import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -73,14 +74,21 @@ public class DefaultController implements Controller {
         return null;
     }
 
+
     @Override
     public List<Track> getTracks() {
         return Repositories.getH2Repo().getTracks();
     }
 
-    @Override
-    public Reservation createReservation() {
-        return Repositories.getH2Repo().insertReservation();
+//    @Override
+//    public Reservation createReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
+//        return null;
+//    }
 
+    @Override
+    public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
+        return Repositories.getH2Repo().insertReservation();
     }
+
+
 }
