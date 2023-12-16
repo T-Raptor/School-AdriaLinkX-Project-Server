@@ -1,6 +1,6 @@
 package be.howest.ti.adria.logic.domain;
 
-public class Shuttle implements Observable {
+public class Shuttle extends PureObservable {
     private final int id;
     private final String serial;
 

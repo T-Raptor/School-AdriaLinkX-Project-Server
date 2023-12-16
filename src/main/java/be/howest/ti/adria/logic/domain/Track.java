@@ -1,6 +1,6 @@
 package be.howest.ti.adria.logic.domain;
 
-public class Track implements Observable {
+public class Track extends PureObservable {
     private final int id;
     private final Station station1;
     private final Station station2;
@@ -26,4 +26,7 @@ public class Track implements Observable {
     public int getId() {
         return this.id;
     }
+
+
+
 }

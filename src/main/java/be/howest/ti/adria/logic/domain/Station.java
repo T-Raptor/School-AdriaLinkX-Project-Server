@@ -1,6 +1,6 @@
 package be.howest.ti.adria.logic.domain;
 
-public class Station implements Observable {
+public class Station extends PureObservable {
     private final int id;
     private final String name;
     private final double latitude;
