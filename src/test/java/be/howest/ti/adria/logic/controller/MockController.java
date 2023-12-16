@@ -48,6 +48,14 @@ public class MockController implements Controller {
     }
 
     @Override
+    public List<Reservation> getReservations() {
+        List<Reservation> reservations = new ArrayList<>();
+        reservations.add(new Reservation(7, Timestamp.valueOf("2022-05-08 14:30:00"), Timestamp.valueOf("2022-05-08 18:30:00"), "Hoogle", getTracks()));
+        reservations.add(new Reservation(8, Timestamp.valueOf("2022-05-12 9:30:00"), Timestamp.valueOf("2022-05-09 11:30:00"), "Macrosoft", getTracks()));
+        return reservations;
+    }
+
+    @Override
     public List<Event> searchEvents(EventFilter filter) {
         List<Event> events = new ArrayList<>();
         events.add(new LocalEvent(2, new Shuttle(2, "AAAA-BBBB-CCCC"), new Timestamp(1000), "MOVE", 20, 10));

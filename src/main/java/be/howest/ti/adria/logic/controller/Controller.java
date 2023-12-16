@@ -18,5 +18,7 @@ public interface Controller {
 
     List<Track> getTracks();
 
+    List<Reservation> getReservations();
+
     List<Event> searchEvents(EventFilter filter);
 }

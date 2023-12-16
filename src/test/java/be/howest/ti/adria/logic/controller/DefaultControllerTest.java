@@ -167,6 +167,19 @@ class DefaultControllerTest {
     }
 
     @Test
+    void getReservations() {
+        // Arrange
+        Controller sut = new DefaultController();
+
+        // Act
+        List<Reservation> reservations = sut.getReservations();
+
+        //Assert
+        assertNotNull(reservations);
+        assertFalse(reservations.isEmpty());
+    }
+
+    @Test
     void searchEventsNoFilter() {
         // Arrange
         Controller sut = new DefaultController();
