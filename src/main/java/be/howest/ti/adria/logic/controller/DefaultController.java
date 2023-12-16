@@ -7,7 +7,6 @@ import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -76,6 +75,11 @@ public class DefaultController implements Controller {
 
     @Override
     public List<Event> searchEvents(EventFilter filter) {
-        return new ArrayList<>();
+        List<Event> events = Repositories.getH2Repo().getEvents();
+        return events
+                .stream()
+                .filter(e -> filter.getEarliest() == null || filter.getEarliest().before(e.getMoment()) || filter.getEarliest().equals(e.getMoment()) )
+                .filter(e -> filter.getLatest() == null || filter.getLatest().after(e.getMoment()) || filter.getLatest().equals(e.getMoment()) )
+                .toList();
     }
 }
