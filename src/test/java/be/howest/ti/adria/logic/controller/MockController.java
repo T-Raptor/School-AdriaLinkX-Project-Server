@@ -1,10 +1,8 @@
 package be.howest.ti.adria.logic.controller;
 
-import be.howest.ti.adria.logic.domain.Event;
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +49,8 @@ public class MockController implements Controller {
 
     @Override
     public List<Event> searchEvents(EventFilter filter) {
-        return new ArrayList<>();
+        List<Event> events = new ArrayList<>();
+        events.add(new LocalEvent(2, new Shuttle(2, "AAAA-BBBB-CCCC"), new Timestamp(1000), "MOVE", 20, 10));
+        return events;
     }
 }
