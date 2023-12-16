@@ -66,6 +66,12 @@ public class MockController implements Controller {
         events.add(new Event(2, track, new Timestamp(1000), "BREAK"));
         events.add(new Event(3, track, new Timestamp(1500), "WARN"));
         events.add(new LocalEvent(4, new Shuttle(2, "AAAA-BBBB-CCCC"), new Timestamp(1000), "MOVE", 20, 10));
-        return events;
+        return events
+                .stream()
+                .filter(e -> filter.getEarliest() == null || filter.getEarliest().before(e.getMoment()) || filter.getEarliest().equals(e.getMoment()) )
+                .filter(e -> filter.getLatest() == null || filter.getLatest().after(e.getMoment()) || filter.getLatest().equals(e.getMoment()) )
+                .filter(e -> filter.getTarget() == null || filter.getTarget().equals(e.getTarget()) )
+                .filter(e -> filter.getSubject() == null || filter.getSubject().equals(e.getSubject()) )
+                .toList();
     }
 }
