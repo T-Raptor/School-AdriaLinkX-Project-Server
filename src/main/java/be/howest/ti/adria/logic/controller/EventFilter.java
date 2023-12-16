@@ -5,20 +5,20 @@ import be.howest.ti.adria.logic.domain.Observable;
 import java.sql.Timestamp;
 
 public class EventFilter {
-    private Observable observable;
+    private Observable target;
     private String subject;
     private Timestamp earliest;
     private Timestamp latest;
 
 
     public EventFilter() {
-        this.observable = null;
+        this.target = null;
         this.subject = null;
     }
 
 
-    public Observable getObservable() {
-        return observable;
+    public Observable getTarget() {
+        return target;
     }
 
     public String getSubject() {
@@ -34,8 +34,8 @@ public class EventFilter {
     }
 
 
-    public void setObservable(Observable observable) {
-        this.observable = observable;
+    public void setTarget(Observable target) {
+        this.target = target;
     }
 
     public void setSubject(String subject) {

@@ -217,10 +217,10 @@ class DefaultControllerTest {
     @Test
     void searchEventsFilterObservable() {
         // Arrange
-        Observable observable = new UnknownObservable(4);
+        Observable target = new UnknownObservable(4);
         Controller sut = new DefaultController();
         EventFilter filter = new EventFilter();
-        filter.setObservable(observable);
+        filter.setTarget(target);
 
         // Act
         List<Event> events = sut.searchEvents(filter);
@@ -228,7 +228,7 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(events);
         assertFalse(events.isEmpty());
-        assertTrue(events.stream().allMatch(x -> observable.equals(x.getTarget())));
+        assertTrue(events.stream().allMatch(x -> target.equals(x.getTarget())));
     }
 
     @Test
