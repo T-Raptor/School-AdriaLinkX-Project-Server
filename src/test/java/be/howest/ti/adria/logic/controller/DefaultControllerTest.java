@@ -215,7 +215,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void searchEventsFilterObservable() {
+    void searchEventsFilterTarget() {
         // Arrange
         Observable target = new UnknownObservable(4);
         Controller sut = new DefaultController();
