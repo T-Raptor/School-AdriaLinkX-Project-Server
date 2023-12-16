@@ -194,7 +194,7 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(events);
         assertFalse(events.isEmpty());
-        assertTrue(events.stream().allMatch(x -> x.getMoment().before(earliest) || x.getMoment().equals(earliest)));
+        assertTrue(events.stream().allMatch(x -> earliest.before(x.getMoment()) || earliest.equals(x.getMoment()) ));
     }
 
     @Test
@@ -211,7 +211,7 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(events);
         assertFalse(events.isEmpty());
-        assertTrue(events.stream().allMatch(x -> x.getMoment().before(latest) || x.getMoment().equals(latest)));
+        assertTrue(events.stream().allMatch(x -> latest.after(x.getMoment()) || latest.equals(x.getMoment()) ));
     }
 
     @Test
@@ -228,7 +228,7 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(events);
         assertFalse(events.isEmpty());
-        assertTrue(events.stream().allMatch(x -> x.getTarget().equals(observable)));
+        assertTrue(events.stream().allMatch(x -> observable.equals(x.getTarget())));
     }
 
     @Test
@@ -245,6 +245,6 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(events);
         assertFalse(events.isEmpty());
-        assertTrue(events.stream().allMatch(x -> x.getSubject().equals(subject)));
+        assertTrue(events.stream().allMatch(x -> subject.equals(x.getSubject())));
     }
 }
