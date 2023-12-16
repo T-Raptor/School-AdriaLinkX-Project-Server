@@ -183,7 +183,7 @@ class DefaultControllerTest {
     @Test
     void searchEventsFilterEarliest() {
         // Arrange
-        Timestamp earliest = new Timestamp(2022, 5, 13, 9, 40, 9, 0);
+        Timestamp earliest = Timestamp.valueOf("2022-5-13 09:40:09");
         Controller sut = new DefaultController();
         EventFilter filter = new EventFilter();
         filter.setEarliest(earliest);
@@ -200,7 +200,7 @@ class DefaultControllerTest {
     @Test
     void searchEventsFilterLatest() {
         // Arrange
-        Timestamp latest = new Timestamp(2022, 5, 13, 9, 40, 9, 0);
+        Timestamp latest = Timestamp.valueOf("2022-5-13 09:40:09");
         Controller sut = new DefaultController();
         EventFilter filter = new EventFilter();
         filter.setLatest(latest);
