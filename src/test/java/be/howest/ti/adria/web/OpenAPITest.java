@@ -15,6 +15,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(VertxExtension.class)
@@ -163,4 +166,26 @@ class OpenAPITest {
                     testContext.completeNow();
                 }));
     }
+
+    @Test
+    void getReservations(final VertxTestContext testContext) {
+        webClient.get(PORT, HOST, "/api/reservations").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
+                    for (int i = 0; i < array.size(); i++) {
+                        LOGGER.log(Level.INFO, array.getJsonObject(i).toString());
+                        JsonObject body = array.getJsonObject(i);
+                        assertNotNull(body.getString("periodStart"));
+                        assertNotNull(body.getString("periodStop"));
+                        assertNotNull(body.getString("company"));
+                        assertNotNull(body.getJsonArray("route"));
+                    }
+                    testContext.completeNow();
+                }));
+    }
+
+    private static final Logger LOGGER = Logger.getLogger(OpenAPITest.class.getName());
 }
