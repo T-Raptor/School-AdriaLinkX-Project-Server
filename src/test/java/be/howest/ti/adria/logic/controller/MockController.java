@@ -58,7 +58,14 @@ public class MockController implements Controller {
     @Override
     public List<Event> searchEvents(EventFilter filter) {
         List<Event> events = new ArrayList<>();
-        events.add(new LocalEvent(2, new Shuttle(2, "AAAA-BBBB-CCCC"), new Timestamp(1000), "MOVE", 20, 10));
+        Track track = new Track(
+                3,
+                new Station(1, "Adria", 50.85292760248162, 4.351725442466426),
+                new Station(1, "Bdria", 47.03051037331985, 2.286659149568905)
+        );
+        events.add(new Event(2, track, new Timestamp(1000), "BREAK"));
+        events.add(new Event(3, track, new Timestamp(1500), "WARN"));
+        events.add(new LocalEvent(4, new Shuttle(2, "AAAA-BBBB-CCCC"), new Timestamp(1000), "MOVE", 20, 10));
         return events;
     }
 }
