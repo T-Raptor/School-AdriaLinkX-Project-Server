@@ -1,5 +1,6 @@
 package be.howest.ti.adria.logic.controller;
 
+import be.howest.ti.adria.logic.domain.Event;
 import be.howest.ti.adria.logic.domain.Quote;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
@@ -46,5 +47,10 @@ public class MockController implements Controller {
                 new Station(1, "Bdria", 47.03051037331985, 2.286659149568905))
         );
         return tracks;
+    }
+
+    @Override
+    public List<Event> searchEvents(EventFilter filter) {
+        return new ArrayList<>();
     }
 }
