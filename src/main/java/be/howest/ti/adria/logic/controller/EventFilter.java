@@ -14,6 +14,8 @@ public class EventFilter {
     public EventFilter() {
         this.target = null;
         this.subject = null;
+        this.earliest = null;
+        this.latest = null;
     }
 
 

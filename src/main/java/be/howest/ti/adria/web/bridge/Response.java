@@ -1,9 +1,6 @@
 package be.howest.ti.adria.web.bridge;
 
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.web.exceptions.BridgeException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,6 +102,17 @@ public class Response {
         } catch (JsonProcessingException e) {
             LOGGER.log(Level.SEVERE, "Error occurred while attempting to send reservations", e);
             throw new BridgeException("Error occurred while attempting to send reservations");
+        }
+    }
+
+    public static void sendEvents(RoutingContext ctx, List<Event> events) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonArray = objectMapper.writeValueAsString(events);
+            sendOkJsonResponse(ctx, jsonArray);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while attempting to send events", e);
+            throw new BridgeException("Error occurred while attempting to send events");
         }
     }
 }
