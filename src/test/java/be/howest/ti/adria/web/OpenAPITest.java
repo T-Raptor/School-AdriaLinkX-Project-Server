@@ -187,5 +187,44 @@ class OpenAPITest {
                 }));
     }
 
+    @Test
+    void searchEventsNoFilter(final VertxTestContext testContext) {
+        webClient.get(PORT, HOST, "/api/events").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
+                    for (int i = 0; i < array.size(); i++) {
+                        LOGGER.log(Level.INFO, array.getJsonObject(i).toString());
+                        JsonObject body = array.getJsonObject(i);
+                        assertNotNull(body.getString("moment"));
+                        assertNotNull(body.getString("target"));
+                        assertNotNull(body.getString("subject"));
+                    }
+                    testContext.completeNow();
+                }));
+    }
+
+    @Test
+    void searchEventsFilterSubject(final VertxTestContext testContext) {
+        webClient.get(PORT, HOST, "/api/events?subject=MOVE").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
+                    for (int i = 0; i < array.size(); i++) {
+                        LOGGER.log(Level.INFO, array.getJsonObject(i).toString());
+                        JsonObject body = array.getJsonObject(i);
+                        assertNotNull(body.getString("moment"));
+                        assertNotNull(body.getString("target"));
+                        assertNotNull(body.getString("subject"));
+                        assertEquals("MOVE", body.getString("subject"));
+                    }
+                    testContext.completeNow();
+                }));
+    }
+
     private static final Logger LOGGER = Logger.getLogger(OpenAPITest.class.getName());
 }
