@@ -80,6 +80,7 @@ public class DefaultController implements Controller {
                 .stream()
                 .filter(e -> filter.getEarliest() == null || filter.getEarliest().before(e.getMoment()) || filter.getEarliest().equals(e.getMoment()) )
                 .filter(e -> filter.getLatest() == null || filter.getLatest().after(e.getMoment()) || filter.getLatest().equals(e.getMoment()) )
+                .filter(e -> filter.getSubject() == null || filter.getSubject().equals(e.getSubject()))
                 .toList();
     }
 }
