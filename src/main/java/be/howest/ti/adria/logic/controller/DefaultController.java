@@ -1,11 +1,13 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
+import be.howest.ti.adria.logic.domain.Event;
 import be.howest.ti.adria.logic.domain.Quote;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -70,5 +72,10 @@ public class DefaultController implements Controller {
     @Override
     public List<Track> getTracks() {
         return Repositories.getH2Repo().getTracks();
+    }
+
+    @Override
+    public List<Event> searchEvents(EventFilter filter) {
+        return new ArrayList<>();
     }
 }
