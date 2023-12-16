@@ -1,6 +1,7 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
+import be.howest.ti.adria.logic.domain.Event;
 import be.howest.ti.adria.logic.domain.Quote;
 import be.howest.ti.adria.logic.domain.Station;
 import be.howest.ti.adria.logic.domain.Track;
@@ -70,5 +71,17 @@ public class DefaultController implements Controller {
     @Override
     public List<Track> getTracks() {
         return Repositories.getH2Repo().getTracks();
+    }
+
+    @Override
+    public List<Event> searchEvents(EventFilter filter) {
+        List<Event> events = Repositories.getH2Repo().getEvents();
+        return events
+                .stream()
+                .filter(e -> filter.getEarliest() == null || filter.getEarliest().before(e.getMoment()) || filter.getEarliest().equals(e.getMoment()) )
+                .filter(e -> filter.getLatest() == null || filter.getLatest().after(e.getMoment()) || filter.getLatest().equals(e.getMoment()) )
+                .filter(e -> filter.getTarget() == null || filter.getTarget().equals(e.getTarget()) )
+                .filter(e -> filter.getSubject() == null || filter.getSubject().equals(e.getSubject()) )
+                .toList();
     }
 }

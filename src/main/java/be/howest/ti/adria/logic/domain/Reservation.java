@@ -3,7 +3,7 @@ package be.howest.ti.adria.logic.domain;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class Reservation implements Observable {
+public class Reservation extends PureObservable {
     private final int id;
     private final Timestamp periodStart;
     private final Timestamp periodStop;
