@@ -20,9 +20,11 @@ public interface Controller {
 
     List<Station> getStations();
 
-    List<Track> getTracks();
+    List<Track> getReservations();
 
     List<Track> getTracks();
+
+//    List<Track> getTracks();
 
     Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route);
 }
