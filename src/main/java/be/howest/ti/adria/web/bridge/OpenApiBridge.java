@@ -119,7 +119,7 @@ public class OpenApiBridge {
     }
 
     public void searchEvents(RoutingContext ctx) {
-        EventFilter filter = new EventFilter();
+        EventFilter filter = Request.from(ctx).getEventFilter();
         List<Event> events = controller.searchEvents(filter);
         Response.sendEvents(ctx, events);
     }

@@ -1,10 +1,13 @@
 package be.howest.ti.adria.web.bridge;
 
+import be.howest.ti.adria.logic.controller.EventFilter;
+import be.howest.ti.adria.logic.domain.UnknownObservable;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.validation.RequestParameters;
 import io.vertx.ext.web.validation.ValidationHandler;
 
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +56,30 @@ public class Request {
         } catch (IllegalArgumentException ex) {
             LOGGER.log(Level.INFO, "Unable to decipher the data in the body", ex);
             throw new MalformedRequestException("Unable to decipher the data in the request body. See logs for details.");
+        }
+    }
+
+    public EventFilter getEventFilter() {
+        try {
+            EventFilter filter = new EventFilter();
+
+            if (params.queryParameter("target") != null) {
+                filter.setTarget(new UnknownObservable(params.queryParameter("target").getInteger()));
+            }
+            if (params.queryParameter("earliest") != null) {
+                filter.setEarliest(Timestamp.valueOf(params.queryParameter("earliest").getString()));
+            }
+            if (params.queryParameter("latest") != null) {
+                filter.setLatest(Timestamp.valueOf(params.queryParameter("latest").getString()));
+            }
+            if (params.queryParameter("subject") != null) {
+                filter.setSubject(params.queryParameter("subject").getString());
+            }
+
+            return filter;
+        } catch (IllegalArgumentException ex) {
+            LOGGER.log(Level.INFO, "Unable to decipher the data in the query", ex);
+            throw new MalformedRequestException("Unable to decipher the data in the request query. See logs for details.");
         }
     }
 }
