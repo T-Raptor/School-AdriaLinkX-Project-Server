@@ -75,3 +75,12 @@ create table events
     primary key (id),
     foreign key (target) references observables(id)
 );
+
+create table notifications
+(
+    event int not null,
+    company varchar(255) not null,
+    read boolean not null default false,
+    primary key (event, company),
+    foreign key (event) references events(id)
+);
