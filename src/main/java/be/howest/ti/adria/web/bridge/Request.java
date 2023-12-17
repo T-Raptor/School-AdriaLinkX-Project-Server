@@ -35,6 +35,9 @@ public class Request {
     private static final Logger LOGGER = Logger.getLogger(Request.class.getName());
     public static final String SPEC_QUOTE_ID = "quoteId";
     public static final String SPEC_QUOTE = "quote";
+
+    private static final String MSG_BODY_PARSING_FAILED = "Unable to decipher data in the body";
+    private static final String MSG_BODY_PARSING_FAILED_EXT = "Unable to decipher data in the body. See logs for details.";
     private final RequestParameters params;
 
     public static Request from(RoutingContext ctx) {
@@ -55,8 +58,8 @@ public class Request {
                 return params.body().getJsonObject().getString(SPEC_QUOTE);
             return params.body().get().toString();
         } catch (IllegalArgumentException ex) {
-            LOGGER.log(Level.INFO, "Unable to decipher the data in the body", ex);
-            throw new MalformedRequestException("Unable to decipher the data in the request body. See logs for details.");
+            LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
+            throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
         }
     }
 
@@ -79,8 +82,8 @@ public class Request {
 
             return filter;
         } catch (IllegalArgumentException ex) {
-            LOGGER.log(Level.INFO, "Unable to decipher the data in the query", ex);
-            throw new MalformedRequestException("Unable to decipher the data in the request query. See logs for details.");
+            LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
+            throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
         }
     }
 
@@ -98,8 +101,8 @@ public class Request {
             }
             return proposal;
         } catch (IllegalArgumentException ex) {
-            LOGGER.log(Level.INFO, "Unable to decipher the data in the body", ex);
-            throw new MalformedRequestException("Unable to decipher the data in the request body. See logs for details.");
+            LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
+            throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
         }
     }
 
@@ -111,8 +114,8 @@ public class Request {
             JsonObject jsonProposal = params.body().getJsonObject();
             return jsonProposal.mapTo(ReservationProposal.class);
         } catch (IllegalArgumentException ex) {
-            LOGGER.log(Level.INFO, "Unable to decipher the data in the body", ex);
-            throw new MalformedRequestException("Unable to decipher the data in the request body. See logs for details.");
+            LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
+            throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
         }
     }
 }
