@@ -1,9 +1,6 @@
 package be.howest.ti.adria.web.bridge;
 
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.web.exceptions.BridgeException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,6 +92,32 @@ public class Response {
             LOGGER.log(Level.SEVERE, "Error occurred while attempting to send tracks", e);
             throw new BridgeException("Error occurred while attempting to send tracks");
         }
+    }
+
+    public static void sendReservations(RoutingContext ctx, List<Reservation> reservations) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonArray = objectMapper.writeValueAsString(reservations);
+            sendOkJsonResponse(ctx, jsonArray);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while attempting to send reservations", e);
+            throw new BridgeException("Error occurred while attempting to send reservations");
+        }
+    }
+
+    public static void sendEvents(RoutingContext ctx, List<Event> events) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonArray = objectMapper.writeValueAsString(events);
+            sendOkJsonResponse(ctx, jsonArray);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while attempting to send events", e);
+            throw new BridgeException("Error occurred while attempting to send events");
+        }
+    }
+
+    public static void sendEvent(RoutingContext ctx, Event event) {
+        sendOkJsonResponse(ctx, JsonObject.mapFrom(event));
     }
 
     public static void sendReservationCreated(RoutingContext ctx, Reservation reservation) {

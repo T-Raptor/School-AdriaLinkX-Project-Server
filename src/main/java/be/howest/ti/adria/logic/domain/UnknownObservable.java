@@ -1,6 +1,6 @@
 package be.howest.ti.adria.logic.domain;
 
-public class UnknownObservable implements Observable {
+public class UnknownObservable extends PureObservable {
     private final int id;
 
 

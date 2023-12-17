@@ -1,9 +1,7 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -70,5 +68,63 @@ public class DefaultController implements Controller {
     @Override
     public List<Track> getTracks() {
         return Repositories.getH2Repo().getTracks();
+    }
+
+    @Override
+    public List<Reservation> getReservations() {
+        return Repositories.getH2Repo().getReservations();
+    }
+
+    @Override
+    public Reservation placeReservation(ReservationProposal proposal) {
+        return Repositories.getH2Repo().insertReservation(
+                proposal.getPeriodStart(),
+                proposal.getPeriodStop(),
+                proposal.getCompany(),
+                proposal.getRoute().stream().map(x -> Repositories.getH2Repo().getTrack(x)).toList()
+        );
+    }
+
+    @Override
+    public List<Event> searchEvents(EventFilter filter) {
+        List<Event> events = Repositories.getH2Repo().getEvents();
+        return events
+                .stream()
+                .filter(e -> filter.getEarliest() == null || filter.getEarliest().before(e.getMoment()) || filter.getEarliest().equals(e.getMoment()) )
+                .filter(e -> filter.getLatest() == null || filter.getLatest().after(e.getMoment()) || filter.getLatest().equals(e.getMoment()) )
+                .filter(e -> filter.getTarget() == null || filter.getTarget().equals(e.getTarget()) )
+                .filter(e -> filter.getSubject() == null || filter.getSubject().equals(e.getSubject()) )
+                .toList();
+    }
+
+    private Event pushBasicEvent(EventProposal proposal) {
+        return Repositories.getH2Repo().insertEvent(
+                new UnknownObservable(proposal.getTarget()),
+                proposal.getMoment(),
+                proposal.getSubject(),
+                proposal.getReason()
+        );
+    }
+
+    private Event pushLocalEvent(LocalEventProposal proposal) {
+        return Repositories.getH2Repo().insertLocalEvent(
+                new UnknownObservable(proposal.getTarget()),
+                proposal.getMoment(),
+                proposal.getSubject(),
+                proposal.getLatitude(),
+                proposal.getLongitude(),
+                proposal.getReason()
+        );
+    }
+
+    @Override
+    public Event pushEvent(EventProposal proposal) {
+        Event event;
+        if (proposal instanceof LocalEventProposal localProposal) {
+            event = pushLocalEvent(localProposal);
+        } else {
+            event = pushBasicEvent(proposal);
+        }
+        return event;
     }
 }

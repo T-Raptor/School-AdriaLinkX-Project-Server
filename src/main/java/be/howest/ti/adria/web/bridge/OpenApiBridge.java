@@ -2,10 +2,8 @@ package be.howest.ti.adria.web.bridge;
 
 import be.howest.ti.adria.logic.controller.DefaultController;
 import be.howest.ti.adria.logic.controller.Controller;
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.controller.EventFilter;
+import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -59,10 +57,17 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: getTracks");
         routerBuilder.operation("getTracks").handler(this::getTracks);
 
+        LOGGER.log(Level.INFO, "Installing handler for: getReservations");
+        routerBuilder.operation("getReservations").handler(this::getReservations);
+
+        LOGGER.log(Level.INFO, "Installing handler for: searchEvents");
+        routerBuilder.operation("searchEvents").handler(this::searchEvents);
+
+        LOGGER.log(Level.INFO, "Installing handler for: pushEvent");
+        routerBuilder.operation("pushEvent").handler(this::pushEvent);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
-
-
     }
 
     public OpenApiBridge() {
@@ -110,6 +115,23 @@ public class OpenApiBridge {
     public void getTracks(RoutingContext ctx) {
         List<Track> tracks = controller.getTracks();
         Response.sendTracks(ctx, tracks);
+    }
+
+    public void getReservations(RoutingContext ctx) {
+        List<Reservation> reservations = controller.getReservations();
+        Response.sendReservations(ctx, reservations);
+    }
+
+    public void searchEvents(RoutingContext ctx) {
+        EventFilter filter = Request.from(ctx).getEventFilter();
+        List<Event> events = controller.searchEvents(filter);
+        Response.sendEvents(ctx, events);
+    }
+
+    public void pushEvent(RoutingContext ctx) {
+        EventProposal proposal = Request.from(ctx).getEventProposal();
+        Event event = controller.pushEvent(proposal);
+        Response.sendEvent(ctx, event);
     }
 
     public void insertReservation(RoutingContext ctx) {

@@ -1,8 +1,6 @@
 package be.howest.ti.adria.logic.controller;
 
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 
 import java.util.List;
 
@@ -18,4 +16,10 @@ public interface Controller {
     List<Station> getStations();
 
     List<Track> getTracks();
+
+    List<Reservation> getReservations();
+    Reservation placeReservation(ReservationProposal proposal);
+
+    List<Event> searchEvents(EventFilter filter);
+    Event pushEvent(EventProposal proposal);
 }
