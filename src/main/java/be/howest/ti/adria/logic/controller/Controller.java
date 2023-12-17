@@ -19,6 +19,7 @@ public interface Controller {
     List<Track> getTracks();
 
     List<Reservation> getReservations();
+    Reservation placeReservation(ReservationProposal proposal);
 
     List<Event> searchEvents(EventFilter filter);
     Event pushEvent(EventProposal proposal);

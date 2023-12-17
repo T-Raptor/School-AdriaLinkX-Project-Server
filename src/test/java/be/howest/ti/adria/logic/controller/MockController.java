@@ -56,6 +56,20 @@ public class MockController implements Controller {
     }
 
     @Override
+    public Reservation placeReservation(ReservationProposal proposal) {
+        List<Track> tracks = new ArrayList<>();
+        for (int trackId : proposal.getRoute()) {
+            tracks.add(
+                    new Track(trackId,
+                            new Station(1, "A", 0, 0),
+                            new Station(2, "B", 0, 0)
+                    )
+            );
+        }
+        return new Reservation(245, proposal.getPeriodStart(), proposal.getPeriodStop(), proposal.getCompany(), tracks);
+    }
+
+    @Override
     public List<Event> searchEvents(EventFilter filter) {
         List<Event> events = new ArrayList<>();
         events.add(new Event(2, new UnknownObservable(1), new Timestamp(1000), "BREAK"));

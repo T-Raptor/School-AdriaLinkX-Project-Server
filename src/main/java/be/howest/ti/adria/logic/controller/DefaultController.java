@@ -74,7 +74,17 @@ public class DefaultController implements Controller {
     public List<Reservation> getReservations() {
         return Repositories.getH2Repo().getReservations();
     }
-    
+
+    @Override
+    public Reservation placeReservation(ReservationProposal proposal) {
+        return Repositories.getH2Repo().insertReservation(
+                proposal.getPeriodStart(),
+                proposal.getPeriodStop(),
+                proposal.getCompany(),
+                proposal.getRoute().stream().map(x -> Repositories.getH2Repo().getTrack(x)).toList()
+        );
+    }
+
     @Override
     public List<Event> searchEvents(EventFilter filter) {
         List<Event> events = Repositories.getH2Repo().getEvents();
