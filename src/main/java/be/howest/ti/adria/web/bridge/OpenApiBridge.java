@@ -123,7 +123,7 @@ public class OpenApiBridge {
                 List<Track> route = request.getRoute();
 
                 // Create the reservation
-                Reservation reservation = controller.insertReservation(periodStart, periodStop, company, route);
+                Reservation reservation = null;
 
                 // Send the reservation back to the client
                 Response.sendReservationCreated(ctx, reservation);
