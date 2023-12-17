@@ -15,6 +15,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
 
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -226,7 +227,7 @@ class OpenAPITest {
                 }));
     }
 
-    private JsonObject createLocalEventProposal(int target, String moment, String subject, double latitude, double longitude) {
+    private JsonObject createLocalEventProposal(int target, long moment, String subject, double latitude, double longitude) {
         return new JsonObject()
                 .put("target", target)
                 .put("moment", moment)
@@ -235,10 +236,17 @@ class OpenAPITest {
                 .put("longitude", longitude);
     }
 
+    private JsonObject createBasicEventProposal(int target, long moment, String subject) {
+        return new JsonObject()
+                .put("target", target)
+                .put("moment", moment)
+                .put("subject", subject);
+    }
+
     @Test
-    void pushEvent(final VertxTestContext testContext) {
+    void pushLocalEvent(final VertxTestContext testContext) {
         int target = 9;
-        String moment = "2022-5-13 09:40:09";
+        long moment = Timestamp.valueOf("2022-05-13 09:40:09").getTime();
         String subject = "MOVE";
         double latitude = 47;
         double longitude = -25;
@@ -248,10 +256,27 @@ class OpenAPITest {
                     assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
                     JsonObject event = response.bodyAsJsonObject();
                     assertEquals(target, event.getJsonObject("target").getInteger("id"));
-                    assertEquals(moment, event.getString("moment"));
+                    assertEquals(moment, event.getLong("moment"));
                     assertEquals(subject, event.getString("subject"));
                     assertEquals(latitude, event.getDouble("latitude"));
                     assertEquals(longitude, event.getDouble("longitude"));
+                    testContext.completeNow();
+                }));
+    }
+
+    @Test
+    void pushBasicEvent(final VertxTestContext testContext) {
+        int target = 3;
+        long moment = Timestamp.valueOf("2022-05-13 09:40:09").getTime();
+        String subject = "BREAK";
+        webClient.post(PORT, HOST, "/api/events").sendJsonObject(createBasicEventProposal(target, moment, subject))
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonObject event = response.bodyAsJsonObject();
+                    assertEquals(target, event.getJsonObject("target").getInteger("id"));
+                    assertEquals(moment, event.getLong("moment"));
+                    assertEquals(subject, event.getString("subject"));
                     testContext.completeNow();
                 }));
     }
