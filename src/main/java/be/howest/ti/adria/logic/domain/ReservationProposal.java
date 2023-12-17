@@ -1,5 +1,8 @@
 package be.howest.ti.adria.logic.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -10,7 +13,13 @@ public class ReservationProposal {
     private final List<Integer> route;
 
 
-    public ReservationProposal(Timestamp periodStart, Timestamp periodStop, String company, List<Integer> route) {
+    @JsonCreator
+    public ReservationProposal(
+            @JsonProperty("periodStart") Timestamp periodStart,
+            @JsonProperty("periodStop") Timestamp periodStop,
+            @JsonProperty("company") String company,
+            @JsonProperty("route") List<Integer> route
+    ) {
         this.periodStart = periodStart;
         this.periodStop = periodStop;
         this.company = company;
