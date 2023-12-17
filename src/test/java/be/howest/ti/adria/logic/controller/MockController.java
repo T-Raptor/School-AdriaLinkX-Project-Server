@@ -74,4 +74,9 @@ public class MockController implements Controller {
                 .filter(e -> filter.getSubject() == null || filter.getSubject().equals(e.getSubject()) )
                 .toList();
     }
+
+    @Override
+    public Event pushEvent(EventProposal proposal) {
+        return new Event(1, new UnknownObservable(proposal.getTarget()), proposal.getMoment(), proposal.getSubject(), proposal.getReason());
+    }
 }

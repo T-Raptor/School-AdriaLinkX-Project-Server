@@ -21,4 +21,5 @@ public interface Controller {
     List<Reservation> getReservations();
 
     List<Event> searchEvents(EventFilter filter);
+    Event pushEvent(EventProposal proposal);
 }

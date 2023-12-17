@@ -1,11 +1,7 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
-import be.howest.ti.adria.logic.domain.Event;
-import be.howest.ti.adria.logic.domain.Quote;
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Station;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -89,5 +85,10 @@ public class DefaultController implements Controller {
                 .filter(e -> filter.getTarget() == null || filter.getTarget().equals(e.getTarget()) )
                 .filter(e -> filter.getSubject() == null || filter.getSubject().equals(e.getSubject()) )
                 .toList();
+    }
+
+    @Override
+    public Event pushEvent(EventProposal proposal) {
+        return null;
     }
 }
