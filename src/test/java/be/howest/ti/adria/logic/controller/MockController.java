@@ -108,4 +108,11 @@ public class MockController implements Controller {
         return event;
 
     }
+
+    @Override
+    public List<Notification> popUnreadNotifications(String company) {
+        return List.of(
+                new Notification(new Event(1, new UnknownObservable(1), new Timestamp(1000), "WARN"), company, false)
+        );
+    }
 }

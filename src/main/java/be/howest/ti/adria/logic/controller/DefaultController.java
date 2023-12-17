@@ -4,6 +4,7 @@ import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -126,5 +127,10 @@ public class DefaultController implements Controller {
             event = pushBasicEvent(proposal);
         }
         return event;
+    }
+
+    @Override
+    public List<Notification> popUnreadNotifications(String company) {
+        return new ArrayList<>();
     }
 }
