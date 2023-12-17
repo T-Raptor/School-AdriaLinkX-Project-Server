@@ -23,7 +23,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository, NotificationRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
 
     private static final String COLUMN_LATITUDE = "latitude";
@@ -612,5 +612,21 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 },
                 rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude, reason)
         );
+    }
+
+
+    @Override
+    public List<Notification> getNotifications() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Notification insertNotification(int event, String company) {
+        return null;
+    }
+
+    @Override
+    public Notification updateNotification(boolean read) {
+        return null;
     }
 }
