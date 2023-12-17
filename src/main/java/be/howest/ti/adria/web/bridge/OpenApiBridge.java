@@ -128,7 +128,9 @@ public class OpenApiBridge {
     }
 
     public void pushEvent(RoutingContext ctx) {
-        throw new UnsupportedOperationException();
+        EventProposal proposal = Request.from(ctx).getEventProposal();
+        Event event = controller.pushEvent(proposal);
+        Response.sendEvent(ctx, event);
     }
 
 

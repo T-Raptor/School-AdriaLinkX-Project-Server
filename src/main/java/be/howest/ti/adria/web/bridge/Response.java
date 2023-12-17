@@ -115,4 +115,8 @@ public class Response {
             throw new BridgeException("Error occurred while attempting to send events");
         }
     }
+
+    public static void sendEvent(RoutingContext ctx, Event event) {
+        sendOkJsonResponse(ctx, JsonObject.mapFrom(event));
+    }
 }

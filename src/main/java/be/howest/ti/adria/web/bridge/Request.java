@@ -1,8 +1,11 @@
 package be.howest.ti.adria.web.bridge;
 
 import be.howest.ti.adria.logic.controller.EventFilter;
+import be.howest.ti.adria.logic.domain.EventProposal;
+import be.howest.ti.adria.logic.domain.LocalEventProposal;
 import be.howest.ti.adria.logic.domain.UnknownObservable;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.validation.RequestParameters;
 import io.vertx.ext.web.validation.ValidationHandler;
@@ -80,6 +83,25 @@ public class Request {
         } catch (IllegalArgumentException ex) {
             LOGGER.log(Level.INFO, "Unable to decipher the data in the query", ex);
             throw new MalformedRequestException("Unable to decipher the data in the request query. See logs for details.");
+        }
+    }
+
+    public EventProposal getEventProposal() {
+        try {
+            if (!params.body().isJsonObject()) {
+                throw new MalformedRequestException("Body is not a json object");
+            }
+            JsonObject jsonProposal = params.body().getJsonObject();
+            EventProposal proposal;
+            if (jsonProposal.containsKey("latitude") || jsonProposal.containsKey("longitude")) {
+                proposal = jsonProposal.mapTo(LocalEventProposal.class);
+            } else {
+                proposal = jsonProposal.mapTo(EventProposal.class);
+            }
+            return proposal;
+        } catch (IllegalArgumentException ex) {
+            LOGGER.log(Level.INFO, "Unable to decipher the data in the body", ex);
+            throw new MalformedRequestException("Unable to decipher the data in the request body. See logs for details.");
         }
     }
 }
