@@ -68,6 +68,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_INSERT_LOCAL_EVENT_WITH_REASON = "insert into events (target, moment, class, local, latitude, longitude, reason) values (?, ?, ?, true, ?, ?, ?);";
 
     private static final String SQL_SELECT_NOTIFICATIONS = "select * from notifications;";
+    private static final String SQL_INSERT_NOTIFICATION = "insert into notifications (event, company) values (?, ?);";
 
 
     private final Server dbWebConsole;
@@ -628,7 +629,14 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Notification insertNotification(int event, String company) {
-        return null;
+        return insertRow(
+                SQL_INSERT_NOTIFICATION,
+                stmt -> {
+                    stmt.setInt(1, event);
+                    stmt.setString(2, company);
+                },
+                rs -> new Notification(getEvent(rs.getInt("event")), rs.getString("company"), false)
+        );
     }
 
     @Override
