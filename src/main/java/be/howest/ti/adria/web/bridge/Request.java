@@ -70,10 +70,10 @@ public class Request {
                 filter.setTarget(new UnknownObservable(params.queryParameter("target").getInteger()));
             }
             if (params.queryParameter("earliest") != null) {
-                filter.setEarliest(Timestamp.valueOf(params.queryParameter("earliest").getString()));
+                filter.setEarliest(new Timestamp(params.queryParameter("earliest").getLong()));
             }
             if (params.queryParameter("latest") != null) {
-                filter.setLatest(Timestamp.valueOf(params.queryParameter("latest").getString()));
+                filter.setLatest(new Timestamp(params.queryParameter("latest").getLong()));
             }
             if (params.queryParameter("subject") != null) {
                 filter.setSubject(params.queryParameter("subject").getString());
