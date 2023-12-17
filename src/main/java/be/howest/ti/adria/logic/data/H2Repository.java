@@ -636,7 +636,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setInt(1, event);
                     stmt.setString(2, company);
                 },
-                rs -> new Notification(getEvent(rs.getInt("event")), rs.getString("company"), false)
+                rs -> new Notification(getEvent(event), company, false)
         );
     }
 
