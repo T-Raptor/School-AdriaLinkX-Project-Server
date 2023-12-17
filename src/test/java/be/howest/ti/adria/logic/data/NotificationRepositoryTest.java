@@ -28,7 +28,7 @@ public abstract class NotificationRepositoryTest {
     void insertNotification() {
         // Arrange
         int event = 1;
-        String company = "Macrosoft";
+        String company = "Mesa";
 
         // Act
         Notification notification = repository.insertNotification(event, company);
@@ -46,7 +46,7 @@ public abstract class NotificationRepositoryTest {
     void updateNotification() {
         // Arrange
         int event = 1;
-        String company = "Macrosoft";
+        String company = "Mesa";
         repository.insertNotification(event, company);
 
         // Act
