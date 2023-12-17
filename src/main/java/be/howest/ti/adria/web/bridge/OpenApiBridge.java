@@ -66,6 +66,9 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: pushEvent");
         routerBuilder.operation("pushEvent").handler(this::pushEvent);
 
+        LOGGER.log(Level.INFO, "Installing handler for: placeReservation");
+        routerBuilder.operation("createReservation").handler(this::placeReservation);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
     }
@@ -134,7 +137,7 @@ public class OpenApiBridge {
         Response.sendEvent(ctx, event);
     }
 
-    public void insertReservation(RoutingContext ctx) {
+    public void placeReservation(RoutingContext ctx) {
         try {
             // Extract data from the request
             Request request = Request.from(ctx);
