@@ -77,6 +77,26 @@ public class MockController implements Controller {
 
     @Override
     public Event pushEvent(EventProposal proposal) {
-        return new Event(1, new UnknownObservable(proposal.getTarget()), proposal.getMoment(), proposal.getSubject(), proposal.getReason());
+        Event event;
+        if (proposal instanceof LocalEventProposal localProposal) {
+            event = new LocalEvent(
+                    1,
+                    new UnknownObservable(localProposal.getTarget()),
+                    proposal.getMoment(), proposal.getSubject(),
+                    localProposal.getLatitude(),
+                    localProposal.getLongitude(),
+                    proposal.getReason()
+            );
+        } else {
+            event = new Event(
+                    1,
+                    new UnknownObservable(proposal.getTarget()),
+                    proposal.getMoment(),
+                    proposal.getSubject(),
+                    proposal.getReason()
+            );
+        }
+        return event;
+
     }
 }
