@@ -23,7 +23,7 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository, NotificationRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
 
     private static final String COLUMN_LATITUDE = "latitude";
@@ -66,6 +66,10 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String SQL_INSERT_EVENT_WITH_REASON = "insert into events (target, moment, class, reason) values (?, ?, ?, ?);";
     private static final String SQL_INSERT_LOCAL_EVENT = "insert into events (target, moment, class, local, latitude, longitude) values (?, ?, ?, true, ?, ?);";
     private static final String SQL_INSERT_LOCAL_EVENT_WITH_REASON = "insert into events (target, moment, class, local, latitude, longitude, reason) values (?, ?, ?, true, ?, ?, ?);";
+
+    private static final String SQL_SELECT_NOTIFICATIONS = "select * from notifications;";
+    private static final String SQL_INSERT_NOTIFICATION = "insert into notifications (event, company) values (?, ?);";
+    private static final String SQL_UPDATE_NOTIFICATION = "update notifications set `read` = ? where event = ? and company = ?;";
 
 
     private final Server dbWebConsole;
@@ -612,5 +616,40 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 },
                 rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude, reason)
         );
+    }
+
+
+    @Override
+    public List<Notification> getNotifications() {
+        return getRows(
+                SQL_SELECT_NOTIFICATIONS,
+                stmt -> { },
+                rs -> new Notification(getEvent(rs.getInt("event")), rs.getString("company"), rs.getBoolean("read"))
+        );
+    }
+
+    @Override
+    public Notification insertNotification(int event, String company) {
+        return insertRow(
+                SQL_INSERT_NOTIFICATION,
+                stmt -> {
+                    stmt.setInt(1, event);
+                    stmt.setString(2, company);
+                },
+                rs -> new Notification(getEvent(event), company, false)
+        );
+    }
+
+    @Override
+    public Notification updateNotification(int event, String company, boolean read) {
+        updateRow(
+                SQL_UPDATE_NOTIFICATION,
+                stmt -> {
+                    stmt.setBoolean(1, read);
+                    stmt.setInt(2, event);
+                    stmt.setString(3, company);
+                }
+        );
+        return new Notification(getEvent(event), company, read);
     }
 }
