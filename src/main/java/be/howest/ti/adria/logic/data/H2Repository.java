@@ -69,6 +69,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     private static final String SQL_SELECT_NOTIFICATIONS = "select * from notifications;";
     private static final String SQL_INSERT_NOTIFICATION = "insert into notifications (event, company) values (?, ?);";
+    private static final String SQL_UPDATE_NOTIFICATION = "update notifications set `read` = ? where event = ? and company = ?;";
 
 
     private final Server dbWebConsole;
@@ -641,6 +642,14 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Notification updateNotification(int event, String company, boolean read) {
-        return null;
+        updateRow(
+                SQL_UPDATE_NOTIFICATION,
+                stmt -> {
+                    stmt.setBoolean(1, read);
+                    stmt.setInt(2, event);
+                    stmt.setString(3, company);
+                }
+        );
+        return new Notification(getEvent(event), company, read);
     }
 }
