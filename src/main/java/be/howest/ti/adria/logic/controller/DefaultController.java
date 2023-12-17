@@ -89,6 +89,26 @@ public class DefaultController implements Controller {
 
     @Override
     public Event pushEvent(EventProposal proposal) {
-        return null;
+        Event event;
+        Observable target = new UnknownObservable(proposal.getTarget());
+        if (proposal instanceof LocalEventProposal) {
+            LocalEventProposal localProposal = (LocalEventProposal) proposal;
+            event = Repositories.getH2Repo().insertLocalEvent(
+                    target,
+                    proposal.getMoment(),
+                    proposal.getSubject(),
+                    localProposal.getLatitude(),
+                    localProposal.getLongitude(),
+                    proposal.getReason()
+            );
+        } else {
+            event = Repositories.getH2Repo().insertEvent(
+                    target,
+                    proposal.getMoment(),
+                    proposal.getSubject(),
+                    proposal.getReason()
+            );
+        }
+        return event;
     }
 }
