@@ -62,6 +62,9 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: searchEvents");
         routerBuilder.operation("searchEvents").handler(this::searchEvents);
 
+        LOGGER.log(Level.INFO, "Installing handler for: pushEvent");
+        routerBuilder.operation("pushEvent").handler(this::pushEvent);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
     }
@@ -122,6 +125,10 @@ public class OpenApiBridge {
         EventFilter filter = Request.from(ctx).getEventFilter();
         List<Event> events = controller.searchEvents(filter);
         Response.sendEvents(ctx, events);
+    }
+
+    public void pushEvent(RoutingContext ctx) {
+        throw new UnsupportedOperationException();
     }
 
 
