@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -341,6 +342,39 @@ class OpenAPITest {
                     assertEquals(target, event.getJsonObject("target").getInteger("id"));
                     assertEquals(moment, event.getLong("moment"));
                     assertEquals(subject, event.getString("subject"));
+                    testContext.completeNow();
+                }));
+    }
+
+    private JsonObject createReservationProposal(long periodStart, long periodStop, String company, List<Integer> route) {
+        return new JsonObject()
+                .put("periodStart", periodStart)
+                .put("periodStop", periodStop)
+                .put("company", company)
+                .put("route", route);
+    }
+
+    @Test
+    void placeReservation(final VertxTestContext testContext) {
+        long periodStart = Timestamp.valueOf("2022-05-13 09:40:09").getTime();
+        long periodStop = Timestamp.valueOf("2022-05-13 10:40:09").getTime();
+        String company = "Macrosoft";
+        List<Integer> route = List.of(4, 5);
+        webClient.post(PORT, HOST, "/api/reservations").sendJsonObject(createReservationProposal(periodStart, periodStop, company, route))
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(201, response.statusCode(), MSG_201_EXPECTED);
+                    JsonObject reservation = response.bodyAsJsonObject();
+                    assertEquals(periodStart, reservation.getLong("periodStart"));
+                    assertEquals(periodStop, reservation.getLong("periodStop"));
+                    assertEquals(company, reservation.getString("company"));
+
+                    JsonArray actualRoute = reservation.getJsonArray("route");
+                    assertEquals(route.size(), actualRoute.size());
+                    for (int i = 0; i < actualRoute.size(); i++) {
+                        JsonObject objTrack = actualRoute.getJsonObject(i);
+                        assertTrue(route.contains(objTrack.getInteger("id")));
+                    }
                     testContext.completeNow();
                 }));
     }

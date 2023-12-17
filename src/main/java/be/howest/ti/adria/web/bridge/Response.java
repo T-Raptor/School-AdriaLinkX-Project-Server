@@ -119,4 +119,9 @@ public class Response {
     public static void sendEvent(RoutingContext ctx, Event event) {
         sendOkJsonResponse(ctx, JsonObject.mapFrom(event));
     }
+
+    public static void sendReservationCreated(RoutingContext ctx, Reservation reservation) {
+        sendJsonResponse(ctx, 201, JsonObject.mapFrom(reservation));
+
+    }
 }

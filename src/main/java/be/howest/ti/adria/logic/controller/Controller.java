@@ -13,7 +13,6 @@ public interface Controller {
 
     void deleteQuote(int quoteId);
 
-
     List<Station> getStations();
 
     List<Track> getTracks();
