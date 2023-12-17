@@ -6,7 +6,7 @@ public abstract class PureObservable implements Observable {
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
         PureObservable that = (PureObservable) o;
         return getId() == that.getId();
     }
