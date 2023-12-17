@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -304,5 +305,32 @@ class DefaultControllerTest {
         assertTrue(event instanceof LocalEvent);
         assertEquals(latitude, ((LocalEvent)event).getLatitude());
         assertEquals(longitude, ((LocalEvent)event).getLongitude());
+    }
+
+    @Test
+    void placeReservation() {
+        // Arrange
+        Timestamp periodStart = Timestamp.valueOf("2022-5-13 09:40:09");
+        Timestamp periodStop = Timestamp.valueOf("2022-5-13 10:40:09");
+        String company = "Macrosoft";
+        List<Integer> route = List.of(4, 5);
+        Controller sut = new DefaultController();
+        ReservationProposal proposal = new ReservationProposal(periodStart, periodStop, company, route);
+
+        // Act
+        Reservation reservation = sut.placeReservation(proposal);
+
+        //Assert
+        assertNotNull(reservation);
+        assertEquals(periodStart, reservation.getPeriodStart());
+        assertEquals(periodStop, reservation.getPeriodStop());
+        assertEquals(company, reservation.getCompany());
+
+        assertEquals(route.size(), reservation.getRoute().size());
+        for (int i = 0; i < reservation.getRoute().size(); i++) {
+            int testTrackId = route.get(i);
+            int realTrackId = reservation.getRoute().get(i).getId();
+            assertEquals(testTrackId, realTrackId);
+        }
     }
 }
