@@ -1,5 +1,8 @@
 package be.howest.ti.adria.logic.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Timestamp;
 
 public class EventProposal {
@@ -16,7 +19,13 @@ public class EventProposal {
         this.reason = null;
     }
 
-    public EventProposal(int target, Timestamp moment, String subject, String reason) {
+    @JsonCreator
+    public EventProposal(
+            @JsonProperty("target") int target,
+            @JsonProperty("moment") Timestamp moment,
+            @JsonProperty("subject") String subject,
+            @JsonProperty("reason") String reason
+    ) {
         this.target = target;
         this.moment = moment;
         this.subject = subject;
