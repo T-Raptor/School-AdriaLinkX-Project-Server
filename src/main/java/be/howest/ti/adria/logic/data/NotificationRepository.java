@@ -7,5 +7,5 @@ import java.util.List;
 public interface NotificationRepository {
     List<Notification> getNotifications();
     Notification insertNotification(int event, String company);
-    Notification updateNotification(boolean read);
+    Notification updateNotification(int event, String company, boolean read);
 }

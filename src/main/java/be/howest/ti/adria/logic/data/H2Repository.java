@@ -626,7 +626,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
     @Override
-    public Notification updateNotification(boolean read) {
+    public Notification updateNotification(int event, String company, boolean read) {
         return null;
     }
 }
