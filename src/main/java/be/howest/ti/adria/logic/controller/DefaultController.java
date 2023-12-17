@@ -110,8 +110,7 @@ public class DefaultController implements Controller {
     @Override
     public Event pushEvent(EventProposal proposal) {
         Event event;
-        if (proposal instanceof LocalEventProposal) {
-            LocalEventProposal localProposal = (LocalEventProposal) proposal;
+        if (proposal instanceof LocalEventProposal localProposal) {
             event = pushLocalEvent(localProposal);
         } else {
             event = pushBasicEvent(proposal);
