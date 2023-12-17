@@ -80,9 +80,9 @@ create table events
 
 create table notifications
 (
-    event int,
-    company varchar(255),
-    read boolean default false,
+    event int not null,
+    company varchar(255) not null,
+    read boolean not null default false,
     primary key (event, company),
     foreign key (event) references events(id)
 );
