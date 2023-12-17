@@ -11,7 +11,6 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -138,25 +137,9 @@ public class OpenApiBridge {
     }
 
     public void placeReservation(RoutingContext ctx) {
-        try {
-            // Extract data from the request
-            Request request = Request.from(ctx);
-            if (!request.bodyIsEmpty()) {
-                Timestamp periodStart = request.getPeriodStart();
-                Timestamp periodStop = request.getPeriodStop();
-                String company = request.getCompany();
-                List<Track> route = request.getRoute();
-
-                // Create the reservation
-                Reservation reservation = null;
-
-                // Send the reservation back to the client
-                Response.sendReservationCreated(ctx, reservation);
-            }
-                throw new MalformedRequestException("Request body is not empty");
-        } catch (Exception e) {
-            Response.sendFailure(ctx, 400, e.getMessage());
-        }
+        ReservationProposal proposal = Request.from(ctx).getReservationProposal();
+        Reservation reservation = controller.placeReservation(proposal);
+        Response.sendReservationCreated(ctx, reservation);
     }
 
 
