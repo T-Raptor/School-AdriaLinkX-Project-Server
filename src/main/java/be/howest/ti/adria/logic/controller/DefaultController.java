@@ -87,27 +87,34 @@ public class DefaultController implements Controller {
                 .toList();
     }
 
+    private Event pushBasicEvent(EventProposal proposal) {
+        return Repositories.getH2Repo().insertEvent(
+                new UnknownObservable(proposal.getTarget()),
+                proposal.getMoment(),
+                proposal.getSubject(),
+                proposal.getReason()
+        );
+    }
+
+    private Event pushLocalEvent(LocalEventProposal proposal) {
+        return Repositories.getH2Repo().insertLocalEvent(
+                new UnknownObservable(proposal.getTarget()),
+                proposal.getMoment(),
+                proposal.getSubject(),
+                proposal.getLatitude(),
+                proposal.getLongitude(),
+                proposal.getReason()
+        );
+    }
+
     @Override
     public Event pushEvent(EventProposal proposal) {
         Event event;
-        Observable target = new UnknownObservable(proposal.getTarget());
         if (proposal instanceof LocalEventProposal) {
             LocalEventProposal localProposal = (LocalEventProposal) proposal;
-            event = Repositories.getH2Repo().insertLocalEvent(
-                    target,
-                    proposal.getMoment(),
-                    proposal.getSubject(),
-                    localProposal.getLatitude(),
-                    localProposal.getLongitude(),
-                    proposal.getReason()
-            );
+            event = pushLocalEvent(localProposal);
         } else {
-            event = Repositories.getH2Repo().insertEvent(
-                    target,
-                    proposal.getMoment(),
-                    proposal.getSubject(),
-                    proposal.getReason()
-            );
+            event = pushBasicEvent(proposal);
         }
         return event;
     }
