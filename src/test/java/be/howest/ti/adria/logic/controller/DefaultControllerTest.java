@@ -260,4 +260,49 @@ class DefaultControllerTest {
         assertFalse(events.isEmpty());
         assertTrue(events.stream().allMatch(x -> subject.equals(x.getSubject())));
     }
+
+    @Test
+    void pushBasicEvent() {
+        // Arrange
+        int target = 9;
+        Timestamp moment = Timestamp.valueOf("2022-5-13 09:40:09");
+        String subject = "MOVE";
+        Controller sut = new DefaultController();
+        EventProposal proposal = new EventProposal(target, moment, subject);
+
+        // Act
+        Event event = sut.pushEvent(proposal);
+
+        //Assert
+        assertNotNull(event);
+        assertNotNull(event.getTarget());
+        assertEquals(target, event.getTarget().getId());
+        assertEquals(moment, event.getMoment());
+        assertEquals(subject, event.getSubject());
+    }
+
+    @Test
+    void pushLocalEvent() {
+        // Arrange
+        int target = 9;
+        Timestamp moment = Timestamp.valueOf("2022-5-13 09:40:09");
+        String subject = "MOVE";
+        double latitude = 5;
+        double longitude = -6;
+        Controller sut = new DefaultController();
+        LocalEventProposal proposal = new LocalEventProposal(target, moment, subject, latitude, longitude);
+
+        // Act
+        Event event = sut.pushEvent(proposal);
+
+        //Assert
+        assertNotNull(event);
+        assertNotNull(event.getTarget());
+        assertEquals(target, event.getTarget().getId());
+        assertEquals(moment, event.getMoment());
+        assertEquals(subject, event.getSubject());
+        assertTrue(event instanceof LocalEvent);
+        assertEquals(latitude, ((LocalEvent)event).getLatitude());
+        assertEquals(longitude, ((LocalEvent)event).getLongitude());
+    }
 }
