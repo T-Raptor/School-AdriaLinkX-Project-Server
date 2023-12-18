@@ -379,5 +379,28 @@ class OpenAPITest {
                 }));
     }
 
+    private JsonObject createNotificationFilter(String company) {
+        return new JsonObject().put("company", company);
+    }
+
+    @Test
+    void popUnreadNotifications(final VertxTestContext testContext) {
+        String company = "Macrosoft";
+        webClient.post(PORT, HOST, "/api/notifications/unread").sendJsonObject(createNotificationFilter(company))
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject body = array.getJsonObject(i);
+                        assertEquals(company, body.getString("company"));
+                        assertNotNull(body.getJsonObject("event"));
+                        assertNotNull(body.getBoolean("read"));
+                    }
+                    testContext.completeNow();
+                }));
+    }
+
     private static final Logger LOGGER = Logger.getLogger(OpenAPITest.class.getName());
 }
