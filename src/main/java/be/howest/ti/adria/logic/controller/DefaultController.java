@@ -18,48 +18,6 @@ import java.util.NoSuchElementException;
  * Do not be afraid to create your own Java classes if needed.
  */
 public class DefaultController implements Controller {
-    private static final String MSG_QUOTE_ID_UNKNOWN = "No quote with id: %d";
-
-    @Override
-    public Quote getQuote(int quoteId) {
-        Quote quote = Repositories.getH2Repo().getQuote(quoteId);
-        if (null == quote)
-            throw new NoSuchElementException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
-
-        return quote;
-    }
-
-    @Override
-    public Quote createQuote(String quote) {
-        if (StringUtils.isBlank(quote))
-            throw new IllegalArgumentException("An empty quote is not allowed.");
-
-        return Repositories.getH2Repo().insertQuote(quote);
-    }
-
-    @Override
-    public Quote updateQuote(int quoteId, String quote) {
-        if (StringUtils.isBlank(quote))
-            throw new IllegalArgumentException("No quote provided!");
-
-        if (quoteId < 0)
-            throw new IllegalArgumentException("No valid quote ID provided");
-
-        if (null == Repositories.getH2Repo().getQuote(quoteId))
-            throw new NoSuchElementException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
-
-        return Repositories.getH2Repo().updateQuote(quoteId, quote);
-    }
-
-    @Override
-    public void deleteQuote(int quoteId) {
-        if (null == Repositories.getH2Repo().getQuote(quoteId))
-            throw new NoSuchElementException(String.format(MSG_QUOTE_ID_UNKNOWN, quoteId));
-
-        Repositories.getH2Repo().deleteQuote(quoteId);
-    }
-
-
     @Override
     public List<Station> getStations() {
         return Repositories.getH2Repo().getStations();
@@ -136,7 +94,7 @@ public class DefaultController implements Controller {
                 .filter(not -> company.equals(not.getCompany()))
                 .toList();
         for (Notification not : notifications) {
-            Repositories.getH2Repo().updateNotification(not.getEvent().getId(), not.getCompany(), true);
+            Repositories.getH2Repo().updateNotification(not.getEvent().getId(), not.getCompany(), false);
         }
         return notifications;
     }
