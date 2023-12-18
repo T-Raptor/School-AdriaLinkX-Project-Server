@@ -33,8 +33,6 @@ import java.util.logging.Logger;
  */
 public class Request {
     private static final Logger LOGGER = Logger.getLogger(Request.class.getName());
-    public static final String SPEC_QUOTE_ID = "quoteId";
-    public static final String SPEC_QUOTE = "quote";
 
     private static final String MSG_BODY_NOT_JSON = "Body is not a json object";
     private static final String MSG_BODY_PARSING_FAILED = "Unable to decipher data in the body";
@@ -47,21 +45,6 @@ public class Request {
 
     private Request(RoutingContext ctx) {
         this.params = ctx.get(ValidationHandler.REQUEST_CONTEXT_KEY);
-    }
-
-    public int getQuoteId() {
-        return params.pathParameter(SPEC_QUOTE_ID).getInteger();
-    }
-
-    public String getQuote() {
-        try {
-            if (params.body().isJsonObject())
-                return params.body().getJsonObject().getString(SPEC_QUOTE);
-            return params.body().get().toString();
-        } catch (IllegalArgumentException ex) {
-            LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
-            throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
-        }
     }
 
     public EventFilter getEventFilter() {
