@@ -36,6 +36,7 @@ public class Request {
     public static final String SPEC_QUOTE_ID = "quoteId";
     public static final String SPEC_QUOTE = "quote";
 
+    private static final String MSG_BODY_NOT_JSON = "Body is not a json object";
     private static final String MSG_BODY_PARSING_FAILED = "Unable to decipher data in the body";
     private static final String MSG_BODY_PARSING_FAILED_EXT = "Unable to decipher data in the body. See logs for details.";
     private final RequestParameters params;
@@ -90,7 +91,7 @@ public class Request {
     public EventProposal getEventProposal() {
         try {
             if (!params.body().isJsonObject()) {
-                throw new MalformedRequestException("Body is not a json object");
+                throw new MalformedRequestException(MSG_BODY_NOT_JSON);
             }
             JsonObject jsonProposal = params.body().getJsonObject();
             EventProposal proposal;
@@ -109,10 +110,23 @@ public class Request {
     public ReservationProposal getReservationProposal() {
         try {
             if (!params.body().isJsonObject()) {
-                throw new MalformedRequestException("Body is not a json object");
+                throw new MalformedRequestException(MSG_BODY_NOT_JSON);
             }
             JsonObject jsonProposal = params.body().getJsonObject();
             return jsonProposal.mapTo(ReservationProposal.class);
+        } catch (IllegalArgumentException ex) {
+            LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
+            throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
+        }
+    }
+
+    public String getCompany() {
+        try {
+            if (!params.body().isJsonObject()) {
+                throw new MalformedRequestException(MSG_BODY_NOT_JSON);
+            }
+            JsonObject json = params.body().getJsonObject();
+            return json.getString("company");
         } catch (IllegalArgumentException ex) {
             LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
             throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
