@@ -3,17 +3,14 @@ package be.howest.ti.adria.logic.controller;
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
 import io.vertx.core.json.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -198,7 +195,7 @@ class DefaultControllerTest {
         assertEquals(target, event.getTarget().getId());
         assertEquals(moment, event.getMoment());
         assertEquals(subject, event.getSubject());
-        assertTrue(event instanceof LocalEvent);
+        assertInstanceOf(LocalEvent.class, event);
         assertEquals(latitude, ((LocalEvent)event).getLatitude());
         assertEquals(longitude, ((LocalEvent)event).getLongitude());
     }

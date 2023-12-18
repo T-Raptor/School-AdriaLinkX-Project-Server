@@ -1,10 +1,7 @@
 package be.howest.ti.adria.logic.data;
 
-import io.netty.util.internal.StringUtil;
 import io.vertx.core.json.JsonObject;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 

@@ -2,10 +2,7 @@ package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * DefaultAdriaController is the default implementation for the AdriaController interface.
