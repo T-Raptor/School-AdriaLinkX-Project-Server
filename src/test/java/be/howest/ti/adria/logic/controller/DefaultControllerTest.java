@@ -351,4 +351,19 @@ class DefaultControllerTest {
             assertFalse(notification.isRead());
         }
     }
+
+    @Test
+    void popUnreadNotificationsFlushes() {
+        // Arrange
+        String company = "Macrosoft";
+        Controller sut = new DefaultController();
+        sut.popUnreadNotifications(company);
+
+        // Act
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+
+        //Assert
+        assertNotNull(notifications);
+        assertTrue(notifications.isEmpty());
+    }
 }
