@@ -22,34 +22,12 @@ public class Response {
 
     private Response() { }
 
-    public static void sendQuote(RoutingContext ctx, Quote quote) {
-        sendOkJsonResponse(ctx, JsonObject.mapFrom(quote));
-    }
-
-    public static void sendQuoteCreated(RoutingContext ctx, Quote quote) {
-        sendJsonResponse(ctx, 201, JsonObject.mapFrom(quote));
-    }
-
-    public static void sendQuoteDeleted(RoutingContext ctx) {
-        sendEmptyResponse(ctx, 204);
-    }
-
-    public static void sendQuoteUpdated(RoutingContext ctx, Quote quote) {
-        sendOkJsonResponse(ctx, JsonObject.mapFrom(quote));
-    }
-
     private static void sendOkJsonResponse(RoutingContext ctx, JsonObject response) {
         sendJsonResponse(ctx, 200, response);
     }
 
     private static void sendOkJsonResponse(RoutingContext ctx, String response) {
         sendJsonResponse(ctx, 200, response);
-    }
-
-    private static void sendEmptyResponse(RoutingContext ctx, int statusCode) {
-        ctx.response()
-                .setStatusCode(statusCode)
-                .end();
     }
 
     private static void sendJsonResponse(RoutingContext ctx, int statusCode, Object response) {
@@ -66,10 +44,10 @@ public class Response {
                 .end(response);
     }
 
-    public static void sendFailure(RoutingContext ctx, int code, String quote) {
+    public static void sendFailure(RoutingContext ctx, int code, String message) {
         sendJsonResponse(ctx, code, new JsonObject()
                 .put("failure", code)
-                .put("cause", quote));
+                .put("cause", message));
     }
 
     public static void sendStations(RoutingContext ctx, List<Station> stations) {

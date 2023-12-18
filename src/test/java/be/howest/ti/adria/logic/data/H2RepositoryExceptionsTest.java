@@ -32,11 +32,6 @@ class H2RepositoryExceptionsTest {
         Repositories.configure(dbProperties);
         H2Repository repo = Repositories.getH2Repo();
         repo.cleanUp();
-
-        // Act + Assert
-        Assertions.assertThrows(RepositoryException.class, () -> repo.getQuote(id));
-        Assertions.assertThrows(RepositoryException.class, () -> repo.deleteQuote(id));
-        Assertions.assertThrows(RepositoryException.class, () -> repo.updateQuote(id, "update"));
     }
 
 
