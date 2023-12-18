@@ -68,6 +68,9 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: placeReservation");
         routerBuilder.operation("createReservation").handler(this::placeReservation);
 
+        LOGGER.log(Level.INFO, "Installing handler for: popUnreadNotifications");
+        routerBuilder.operation("popUnreadNotifications").handler(this::popUnreadNotifications);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
     }
@@ -140,6 +143,12 @@ public class OpenApiBridge {
         ReservationProposal proposal = Request.from(ctx).getReservationProposal();
         Reservation reservation = controller.placeReservation(proposal);
         Response.sendReservationCreated(ctx, reservation);
+    }
+
+    public void popUnreadNotifications(RoutingContext ctx) {
+        String company = Request.from(ctx).getCompany();
+        List<Notification> notifications = controller.popUnreadNotifications(company);
+        Response.sendNotifications(ctx, notifications);
     }
 
 

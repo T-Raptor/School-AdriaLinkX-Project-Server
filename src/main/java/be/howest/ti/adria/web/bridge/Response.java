@@ -124,4 +124,15 @@ public class Response {
         sendJsonResponse(ctx, 201, JsonObject.mapFrom(reservation));
 
     }
+
+    public static void sendNotifications(RoutingContext ctx, List<Notification> notifications) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonArray = objectMapper.writeValueAsString(notifications);
+            sendOkJsonResponse(ctx, jsonArray);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while attempting to send notifications", e);
+            throw new BridgeException("Error occurred while attempting to send notifications");
+        }
+    }
 }
