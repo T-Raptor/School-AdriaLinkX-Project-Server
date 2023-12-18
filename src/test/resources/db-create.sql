@@ -1,11 +1,5 @@
 DROP ALL OBJECTS;
 
-create table quotes
-(
-    id    int auto_increment,
-    quote varchar(255)
-);
-
 create table observables
 (
     id  int auto_increment,

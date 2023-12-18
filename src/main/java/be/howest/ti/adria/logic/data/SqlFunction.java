@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 public interface SqlFunction<T, R> extends Function<T, R> {
     Logger LOGGER = Logger.getLogger(SqlFunction.class.getName());
 
-
     @Override
     default R apply(T t) {
         try {

@@ -38,18 +38,6 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing failure handlers for all operations");
         routerBuilder.operations().forEach(op -> op.failureHandler(this::onFailedRequest));
 
-        LOGGER.log(Level.INFO, "Installing handler for: getQuote");
-        routerBuilder.operation("getQuote").handler(this::getQuote);
-
-        LOGGER.log(Level.INFO, "Installing handler for: createQuote");
-        routerBuilder.operation("createQuote").handler(this::createQuote);
-
-        LOGGER.log(Level.INFO, "Installing handler for: updateQuote");
-        routerBuilder.operation("updateQuote").handler(this::updateQuote);
-
-        LOGGER.log(Level.INFO, "Installing handler for: deleteQuote");
-        routerBuilder.operation("deleteQuote").handler(this::deleteQuote);
-
         LOGGER.log(Level.INFO, "Installing handler for: getStations");
         routerBuilder.operation("getStations").handler(this::getStations);
 
@@ -82,35 +70,6 @@ public class OpenApiBridge {
     public OpenApiBridge(Controller controller) {
         this.controller = controller;
     }
-
-    public void getQuote(RoutingContext ctx) {
-        Quote quote = controller.getQuote(Request.from(ctx).getQuoteId());
-
-        Response.sendQuote(ctx, quote);
-    }
-
-    public void createQuote(RoutingContext ctx) {
-        String quote = Request.from(ctx).getQuote();
-
-        Response.sendQuoteCreated(ctx, controller.createQuote(quote));
-    }
-
-    public void updateQuote(RoutingContext ctx) {
-        Request request = Request.from(ctx);
-        String quoteValue = request.getQuote();
-        int quoteId = request.getQuoteId();
-
-        Response.sendQuoteUpdated(ctx, controller.updateQuote(quoteId, quoteValue));
-    }
-
-    public void deleteQuote(RoutingContext ctx) {
-        int quoteId = Request.from(ctx).getQuoteId();
-
-        controller.deleteQuote(quoteId);
-
-        Response.sendQuoteDeleted(ctx);
-    }
-
 
     public void getStations(RoutingContext ctx) {
         List<Station> stations = controller.getStations();
@@ -155,7 +114,7 @@ public class OpenApiBridge {
     private void onFailedRequest(RoutingContext ctx) {
         Throwable cause = ctx.failure();
         int code = ctx.statusCode();
-        String quote = Objects.isNull(cause) ? "" + code : cause.getMessage();
+        String message = Objects.isNull(cause) ? "" + code : cause.getMessage();
 
         // Map custom runtime exceptions to a HTTP status code.
         LOGGER.log(Level.INFO, "Failed request", cause);
@@ -169,7 +128,7 @@ public class OpenApiBridge {
             LOGGER.log(Level.WARNING, "Failed request", cause);
         }
 
-        Response.sendFailure(ctx, code, quote);
+        Response.sendFailure(ctx, code, message);
     }
 
     private CorsHandler createCorsHandler() {

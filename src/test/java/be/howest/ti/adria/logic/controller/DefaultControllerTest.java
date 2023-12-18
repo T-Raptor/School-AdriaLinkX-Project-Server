@@ -3,17 +3,14 @@ package be.howest.ti.adria.logic.controller;
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
 import io.vertx.core.json.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,110 +33,6 @@ class DefaultControllerTest {
     void setupTest() {
         Repositories.getH2Repo().generateData();
     }
-
-    @Test
-    void getQuote() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act
-        Quote quote = sut.getQuote(0);
-
-        //Assert
-        assertTrue(quote != null && StringUtils.isNoneBlank(quote.getValue()));
-    }
-
-    @Test
-    void deleteQuote() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act
-        sut.deleteQuote(0);
-
-        //Assert
-        assertThrows(NoSuchElementException.class, () -> sut.getQuote(0));
-    }
-
-    @Test
-    void updateQuote() {
-        // Arrange
-        Controller sut = new DefaultController();
-        Quote quote = sut.createQuote("some value");
-
-        // Act
-        Quote updatedQuoted = sut.updateQuote(quote.getId(), "new value");
-
-        //Assert
-        assertEquals("new value", updatedQuoted.getValue());
-    }
-
-    @Test
-    void createQuote() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act
-        Quote quote = sut.createQuote("new value");
-
-        //Assert
-        assertEquals("new value", quote.getValue());
-    }
-
-    @Test
-    void getQuoteWithUnknownIdThrowsNotFound() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act + Assert
-        assertThrows(NoSuchElementException.class, () -> sut.getQuote(-1));
-    }
-
-    @Test
-    void createQuoteWithEmptyQuoteThrowsIllegalArgument() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act + Assert
-        assertThrows(IllegalArgumentException.class, () -> sut.createQuote(""));
-    }
-
-    @Test
-    void updateQuoteWithWrongIdThrowsIllegalArgument() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act + Assert
-        assertThrows(IllegalArgumentException.class, () -> sut.updateQuote(-1, "some quote"));
-    }
-
-    @Test
-    void updateQuoteWithUnknownIdThrowsNoSuchElementException() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act + Assert
-        assertThrows(NoSuchElementException.class, () -> sut.updateQuote(1000, "some quote"));
-    }
-
-    @Test
-    void updateQuoteWithEmptyQuoteThrowsIllegalArgument() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act + Assert
-        assertThrows(IllegalArgumentException.class, () -> sut.updateQuote(1, ""));
-    }
-
-    @Test
-    void deleteQuoteWithUnknownIdThrowsNotFound() {
-        // Arrange
-        Controller sut = new DefaultController();
-
-        // Act + Assert
-        assertThrows(NoSuchElementException.class, () -> sut.deleteQuote(-1));
-    }
-
 
     @Test
     void getStations() {
@@ -302,7 +195,7 @@ class DefaultControllerTest {
         assertEquals(target, event.getTarget().getId());
         assertEquals(moment, event.getMoment());
         assertEquals(subject, event.getSubject());
-        assertTrue(event instanceof LocalEvent);
+        assertInstanceOf(LocalEvent.class, event);
         assertEquals(latitude, ((LocalEvent)event).getLatitude());
         assertEquals(longitude, ((LocalEvent)event).getLongitude());
     }

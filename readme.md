@@ -48,7 +48,7 @@ Please, test the config file thoroughly on your local machine as mistakes will n
 
 ## What's included
   - A very basic openapi specification
-    - localhost:8080/api/quotes
+    - localhost:8080/api/stations
   - H2 database web console
   - The setup of a vert.x and openapi (WebServer.java)
   - Minimal H2 repository class
@@ -79,7 +79,7 @@ If for some reason, the api isn't available or you want to use the specification
    - url: jdbc:h2:./db-12
    - no credentials
  - Web api
-   - localhost:8080/api/quotes
+   - localhost:8080/api/stations
  - Web client
    - launch through webstorm/phpstorm (see client-side readme)
   

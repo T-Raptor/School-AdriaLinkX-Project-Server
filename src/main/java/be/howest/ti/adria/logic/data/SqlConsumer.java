@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 public interface SqlConsumer<T> extends Consumer<T> {
     Logger LOGGER = Logger.getLogger(SqlConsumer.class.getName());
 
-
     @Override
     default void accept(T t) {
         try {
