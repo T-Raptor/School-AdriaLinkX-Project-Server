@@ -29,11 +29,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private static final String COLUMN_LATITUDE = "latitude";
     private static final String COLUMN_LONGITUDE = "longitude";
 
-    private static final String SQL_QUOTA_BY_ID = "select id, quote from quotes where id = ?;";
-    private static final String SQL_INSERT_QUOTE = "insert into quotes (`quote`) values (?);";
-    private static final String SQL_UPDATE_QUOTE = "update quotes set quote = ? where id = ?;";
-    private static final String SQL_DELETE_QUOTE = "delete from quotes where id = ?;";
-
     private static final String SQL_INSERT_OBSERVABLE = "insert into observables values ();";
 
     private static final String SQL_SELECT_STATIONS = "select observable_id as id, name, latitude, longitude from stations;";
@@ -226,42 +221,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
             throw new RepositoryException("Could not delete row.");
         }
     }
-
-
-    public Quote getQuote(int id) {
-        return getRow(
-                SQL_QUOTA_BY_ID,
-                stmt -> stmt.setInt(1, id),
-                rs -> new Quote(rs.getInt("id"), rs.getString("quote"))
-        );
-    }
-
-    public Quote insertQuote(String quoteValue) {
-        return insertRow(
-                SQL_INSERT_QUOTE,
-                stmt -> stmt.setString(1, quoteValue),
-                rs -> new Quote(rs.getInt(1), quoteValue)
-        );
-    }
-
-    public Quote updateQuote(int quoteId, String quote) {
-        updateRow(
-                SQL_UPDATE_QUOTE,
-                stmt -> {
-                    stmt.setString(1, quote);
-                    stmt.setInt(2, quoteId);
-                }
-        );
-        return new Quote(quoteId, quote);
-    }
-
-    public void deleteQuote(int quoteId) {
-        deleteRow(
-                SQL_DELETE_QUOTE,
-                stmt -> stmt.setInt(1, quoteId)
-        );
-    }
-
 
     private int insertObservable() {
         return insertRow(
