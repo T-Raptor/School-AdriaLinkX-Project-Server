@@ -22,4 +22,5 @@ public interface Controller {
 
     List<Event> searchEvents(EventFilter filter);
     Event pushEvent(EventProposal proposal);
+    List<Notification> popUnreadNotifications(String company);
 }

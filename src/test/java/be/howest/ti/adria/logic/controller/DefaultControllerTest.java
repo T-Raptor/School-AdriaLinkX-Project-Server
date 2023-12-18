@@ -333,4 +333,37 @@ class DefaultControllerTest {
             assertEquals(testTrackId, realTrackId);
         }
     }
+
+    @Test
+    void popUnreadNotifications() {
+        // Arrange
+        String company = "Macrosoft";
+        Controller sut = new DefaultController();
+
+        // Act
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+
+        //Assert
+        assertNotNull(notifications);
+        assertFalse(notifications.isEmpty());
+        for (Notification notification : notifications) {
+            assertEquals(company, notification.getCompany());
+            assertFalse(notification.isRead());
+        }
+    }
+
+    @Test
+    void popUnreadNotificationsFlushes() {
+        // Arrange
+        String company = "Macrosoft";
+        Controller sut = new DefaultController();
+        sut.popUnreadNotifications(company);
+
+        // Act
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+
+        //Assert
+        assertNotNull(notifications);
+        assertTrue(notifications.isEmpty());
+    }
 }

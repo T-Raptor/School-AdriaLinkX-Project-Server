@@ -127,4 +127,17 @@ public class DefaultController implements Controller {
         }
         return event;
     }
+
+    @Override
+    public List<Notification> popUnreadNotifications(String company) {
+        List<Notification> notifications = Repositories.getH2Repo().getNotifications()
+                .stream()
+                .filter(not -> !not.isRead())
+                .filter(not -> company.equals(not.getCompany()))
+                .toList();
+        for (Notification not : notifications) {
+            Repositories.getH2Repo().updateNotification(not.getEvent().getId(), not.getCompany(), true);
+        }
+        return notifications;
+    }
 }
