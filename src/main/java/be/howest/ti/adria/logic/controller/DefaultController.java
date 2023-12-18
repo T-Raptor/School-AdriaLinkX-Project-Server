@@ -4,7 +4,6 @@ import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -131,6 +130,14 @@ public class DefaultController implements Controller {
 
     @Override
     public List<Notification> popUnreadNotifications(String company) {
-        return new ArrayList<>();
+        List<Notification> notifications = Repositories.getH2Repo().getNotifications()
+                .stream()
+                .filter(not -> !not.isRead())
+                .filter(not -> company.equals(not.getCompany()))
+                .toList();
+        for (Notification not : notifications) {
+            Repositories.getH2Repo().updateNotification(not.getEvent().getId(), not.getCompany(), true);
+        }
+        return notifications;
     }
 }
