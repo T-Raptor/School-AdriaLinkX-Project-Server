@@ -91,7 +91,7 @@ public class DefaultController implements Controller {
                 .filter(not -> company.equals(not.getCompany()))
                 .toList();
         for (Notification not : notifications) {
-            Repositories.getH2Repo().updateNotification(not.getEvent().getId(), not.getCompany(), false);
+            Repositories.getH2Repo().updateNotification(not.getEvent().getId(), not.getCompany(), true);
         }
         return notifications;
     }
