@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * DefaultAdriaController is the default implementation for the AdriaController interface.
  * The controller shouldn't even know that it is used in an API context..
- *
+
  * This class and all other classes in the logic-package (or future sub-packages)
  * should use 100% plain old Java Objects (POJOs). The use of Json, JsonObject or
  * Strings that contain encoded/json data should be avoided here.
