@@ -26,10 +26,17 @@ public class DefaultController implements Controller {
         return Repositories.getH2Repo().getTracks();
     }
 
+
     @Override
     public List<Shuttle> getShuttles() {
         return Repositories.getH2Repo().getShuttles();
     }
+
+    @Override
+    public Shuttle registerShuttle(ShuttleProposal proposal) {
+        return Repositories.getH2Repo().insertShuttle(proposal.getSerial());
+    }
+
 
     @Override
     public List<Reservation> getReservations() {

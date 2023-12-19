@@ -74,6 +74,21 @@ class DefaultControllerTest {
     }
 
     @Test
+    void registerShuttle() {
+        // Arrange
+        String serial = "AAAA-BBBB-CCCC";
+        Controller sut = new DefaultController();
+        ShuttleProposal proposal = new ShuttleProposal(serial);
+
+        // Act
+        Shuttle shuttle = sut.registerShuttle(proposal);
+
+        //Assert
+        assertNotNull(shuttle);
+        assertEquals(serial, shuttle.getSerial());
+    }
+
+    @Test
     void getReservations() {
         // Arrange
         Controller sut = new DefaultController();

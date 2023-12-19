@@ -7,7 +7,9 @@ import java.util.List;
 public interface Controller {
     List<Station> getStations();
     List<Track> getTracks();
+
     List<Shuttle> getShuttles();
+    Shuttle registerShuttle(ShuttleProposal proposal);
 
     List<Reservation> getReservations();
     Reservation placeReservation(ReservationProposal proposal);
