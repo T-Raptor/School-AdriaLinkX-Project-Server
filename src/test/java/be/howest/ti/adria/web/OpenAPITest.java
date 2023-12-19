@@ -93,6 +93,7 @@ class OpenAPITest {
                 }));
     }
 
+
     @Test
     void getShuttles(final VertxTestContext testContext) {
         webClient.get(PORT, HOST, "/api/shuttles").send()
@@ -109,6 +110,25 @@ class OpenAPITest {
                     testContext.completeNow();
                 }));
     }
+
+    private JsonObject createShuttleProposal(String serial) {
+        return new JsonObject().put("serial", serial);
+    }
+
+    @Test
+    void registerShuttle(final VertxTestContext testContext) {
+        String serial = "ABCD-4972-AE44";
+        webClient.post(PORT, HOST, "/api/shuttles").sendJsonObject(createShuttleProposal(serial))
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(201, response.statusCode(), MSG_201_EXPECTED);
+                    JsonObject body = response.bodyAsJsonObject();
+                    assertNotNull(body.getInteger("id"));
+                    assertNotNull(body.getString("serial"));
+                    testContext.completeNow();
+                }));
+    }
+
 
     @Test
     void getReservations(final VertxTestContext testContext) {
