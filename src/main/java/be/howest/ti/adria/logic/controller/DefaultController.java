@@ -34,7 +34,7 @@ public class DefaultController implements Controller {
 
     @Override
     public Shuttle registerShuttle(ShuttleProposal proposal) {
-        return null;
+        return Repositories.getH2Repo().insertShuttle(proposal.getSerial());
     }
 
 
