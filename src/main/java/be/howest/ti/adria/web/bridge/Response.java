@@ -72,6 +72,17 @@ public class Response {
         }
     }
 
+    public static void sendShuttles(RoutingContext ctx, List<Shuttle> shuttles) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonArray = objectMapper.writeValueAsString(shuttles);
+            sendOkJsonResponse(ctx, jsonArray);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while attempting to send shuttles", e);
+            throw new BridgeException("Error occurred while attempting to send shuttles");
+        }
+    }
+
     public static void sendReservations(RoutingContext ctx, List<Reservation> reservations) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
