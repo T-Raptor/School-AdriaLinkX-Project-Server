@@ -59,6 +59,9 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: popUnreadNotifications");
         routerBuilder.operation("popUnreadNotifications").handler(this::popUnreadNotifications);
 
+        LOGGER.log(Level.INFO, "Installing handler for: getShuttles");
+        routerBuilder.operation("getShuttles").handler(this::getShuttles);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
     }
@@ -79,6 +82,11 @@ public class OpenApiBridge {
     public void getTracks(RoutingContext ctx) {
         List<Track> tracks = controller.getTracks();
         Response.sendTracks(ctx, tracks);
+    }
+
+    public void getShuttles(RoutingContext ctx) {
+        List<Shuttle> shuttles = controller.getShuttles();
+        Response.sendShuttles(ctx, shuttles);
     }
 
     public void getReservations(RoutingContext ctx) {
