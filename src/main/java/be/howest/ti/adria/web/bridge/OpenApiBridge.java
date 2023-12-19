@@ -62,6 +62,9 @@ public class OpenApiBridge {
         LOGGER.log(Level.INFO, "Installing handler for: getShuttles");
         routerBuilder.operation("getShuttles").handler(this::getShuttles);
 
+        LOGGER.log(Level.INFO, "Installing handler for: registerShuttle");
+        routerBuilder.operation("registerShuttle").handler(this::registerShuttle);
+
         LOGGER.log(Level.INFO, "All handlers are installed, creating router.");
         return routerBuilder.createRouter();
     }
@@ -87,6 +90,12 @@ public class OpenApiBridge {
     public void getShuttles(RoutingContext ctx) {
         List<Shuttle> shuttles = controller.getShuttles();
         Response.sendShuttles(ctx, shuttles);
+    }
+
+    public void registerShuttle(RoutingContext ctx) {
+        ShuttleProposal proposal = Request.from(ctx).getShuttleProposal();
+        Shuttle shuttle = controller.registerShuttle(proposal);
+        Response.sendShuttle(ctx, shuttle);
     }
 
     public void getReservations(RoutingContext ctx) {

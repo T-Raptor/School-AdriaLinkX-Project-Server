@@ -1,10 +1,14 @@
 package be.howest.ti.adria.logic.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ShuttleProposal {
     private final String serial;
 
 
-    public ShuttleProposal(String serial) {
+    @JsonCreator
+    public ShuttleProposal(@JsonProperty("serial") String serial) {
         this.serial = serial;
     }
 

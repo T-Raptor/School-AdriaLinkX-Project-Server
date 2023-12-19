@@ -103,6 +103,19 @@ public class Request {
         }
     }
 
+    public ShuttleProposal getShuttleProposal() {
+        try {
+            if (!params.body().isJsonObject()) {
+                throw new MalformedRequestException(MSG_BODY_NOT_JSON);
+            }
+            JsonObject jsonProposal = params.body().getJsonObject();
+            return jsonProposal.mapTo(ShuttleProposal.class);
+        } catch (IllegalArgumentException ex) {
+            LOGGER.log(Level.INFO, MSG_BODY_PARSING_FAILED, ex);
+            throw new MalformedRequestException(MSG_BODY_PARSING_FAILED_EXT);
+        }
+    }
+
     public String getCompany() {
         try {
             if (!params.body().isJsonObject()) {

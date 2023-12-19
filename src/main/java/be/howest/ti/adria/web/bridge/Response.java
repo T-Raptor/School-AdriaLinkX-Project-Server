@@ -83,6 +83,10 @@ public class Response {
         }
     }
 
+    public static void sendShuttle(RoutingContext ctx, Shuttle shuttle) {
+        sendJsonResponse(ctx, 201, JsonObject.mapFrom(shuttle));
+    }
+
     public static void sendReservations(RoutingContext ctx, List<Reservation> reservations) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
