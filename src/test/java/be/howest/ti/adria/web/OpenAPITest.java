@@ -94,6 +94,23 @@ class OpenAPITest {
     }
 
     @Test
+    void getShuttles(final VertxTestContext testContext) {
+        webClient.get(PORT, HOST, "/api/shuttles").send()
+                .onFailure(testContext::failNow)
+                .onSuccess(response -> testContext.verify(() -> {
+                    assertEquals(200, response.statusCode(), MSG_200_EXPECTED);
+                    JsonArray array = response.bodyAsJsonArray();
+                    assertFalse(array.isEmpty());
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject body = array.getJsonObject(i);
+                        assertNotNull(body.getInteger("id"));
+                        assertNotNull(body.getString("serial"));
+                    }
+                    testContext.completeNow();
+                }));
+    }
+
+    @Test
     void getReservations(final VertxTestContext testContext) {
         webClient.get(PORT, HOST, "/api/reservations").send()
                 .onFailure(testContext::failNow)
