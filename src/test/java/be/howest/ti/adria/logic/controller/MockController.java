@@ -36,6 +36,11 @@ public class MockController implements Controller {
     }
 
     @Override
+    public Shuttle registerShuttle(ShuttleProposal proposal) {
+        return new Shuttle(1, proposal.getSerial());
+    }
+
+    @Override
     public List<Reservation> getReservations() {
         List<Reservation> reservations = new ArrayList<>();
         reservations.add(new Reservation(7, Timestamp.valueOf("2022-05-08 14:30:00"), Timestamp.valueOf("2022-05-08 18:30:00"), "Hoogle", getTracks()));
