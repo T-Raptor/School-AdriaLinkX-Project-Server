@@ -2,6 +2,8 @@ package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +25,11 @@ public class DefaultController implements Controller {
     @Override
     public List<Track> getTracks() {
         return Repositories.getH2Repo().getTracks();
+    }
+
+    @Override
+    public List<Shuttle> getShuttles() {
+        return new ArrayList<>();
     }
 
     @Override

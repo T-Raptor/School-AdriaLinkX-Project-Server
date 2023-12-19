@@ -28,6 +28,14 @@ public class MockController implements Controller {
     }
 
     @Override
+    public List<Shuttle> getShuttles() {
+        return List.of(
+                new Shuttle(1, "AAAA-BBBB-CCCC"),
+                new Shuttle(2, "DDDD-1111-C2DC")
+        );
+    }
+
+    @Override
     public List<Reservation> getReservations() {
         List<Reservation> reservations = new ArrayList<>();
         reservations.add(new Reservation(7, Timestamp.valueOf("2022-05-08 14:30:00"), Timestamp.valueOf("2022-05-08 18:30:00"), "Hoogle", getTracks()));

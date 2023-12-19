@@ -61,6 +61,19 @@ class DefaultControllerTest {
     }
 
     @Test
+    void getShuttles() {
+        // Arrange
+        Controller sut = new DefaultController();
+
+        // Act
+        List<Shuttle> shuttles = sut.getShuttles();
+
+        //Assert
+        assertNotNull(shuttles);
+        assertFalse(shuttles.isEmpty());
+    }
+
+    @Test
     void getReservations() {
         // Arrange
         Controller sut = new DefaultController();
