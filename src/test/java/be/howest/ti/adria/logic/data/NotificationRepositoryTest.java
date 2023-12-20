@@ -1,12 +1,10 @@
 package be.howest.ti.adria.logic.data;
 
+import be.howest.ti.adria.logic.data.repositories.NotificationRepository;
 import be.howest.ti.adria.logic.domain.Notification;
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Track;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public abstract class NotificationRepositoryTest {

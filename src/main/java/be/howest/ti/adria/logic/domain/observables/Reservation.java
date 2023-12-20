@@ -1,4 +1,6 @@
-package be.howest.ti.adria.logic.domain;
+package be.howest.ti.adria.logic.domain.observables;
+
+import be.howest.ti.adria.logic.domain.PureObservable;
 
 import java.sql.Timestamp;
 import java.util.List;

@@ -1,6 +1,10 @@
 package be.howest.ti.adria.web.bridge;
 
 import be.howest.ti.adria.logic.domain.*;
+import be.howest.ti.adria.logic.domain.observables.Reservation;
+import be.howest.ti.adria.logic.domain.observables.Shuttle;
+import be.howest.ti.adria.logic.domain.observables.Station;
+import be.howest.ti.adria.logic.domain.observables.Track;
 import be.howest.ti.adria.web.exceptions.BridgeException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

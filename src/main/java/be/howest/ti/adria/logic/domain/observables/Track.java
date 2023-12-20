@@ -1,4 +1,7 @@
-package be.howest.ti.adria.logic.domain;
+package be.howest.ti.adria.logic.domain.observables;
+
+import be.howest.ti.adria.logic.domain.PureObservable;
+import be.howest.ti.adria.logic.domain.observables.Station;
 
 public class Track extends PureObservable {
     private final int id;

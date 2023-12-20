@@ -1,7 +1,11 @@
 package be.howest.ti.adria.web.bridge;
 
 import be.howest.ti.adria.logic.controller.EventFilter;
-import be.howest.ti.adria.logic.domain.*;
+import be.howest.ti.adria.logic.domain.observables.UnknownObservable;
+import be.howest.ti.adria.logic.domain.proposals.EventProposal;
+import be.howest.ti.adria.logic.domain.proposals.LocalEventProposal;
+import be.howest.ti.adria.logic.domain.proposals.ReservationProposal;
+import be.howest.ti.adria.logic.domain.proposals.ShuttleProposal;
 import be.howest.ti.adria.web.exceptions.MalformedRequestException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;

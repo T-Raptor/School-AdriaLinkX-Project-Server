@@ -1,6 +1,6 @@
-package be.howest.ti.adria.logic.data;
+package be.howest.ti.adria.logic.data.repositories;
 
-import be.howest.ti.adria.logic.domain.Station;
+import be.howest.ti.adria.logic.domain.observables.Station;
 
 import java.util.List;
 
