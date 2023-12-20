@@ -9,6 +9,7 @@ import be.howest.ti.adria.logic.domain.proposals.ReservationProposal;
 import be.howest.ti.adria.logic.domain.proposals.ShuttleProposal;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * DefaultAdriaController is the default implementation for the AdriaController interface.
@@ -90,6 +91,18 @@ public class DefaultController implements Controller {
         );
     }
 
+    private void sendNotificationToCompanies(Event event) {
+        Optional<Reservation> overlap = getReservations()
+                .stream()
+                .filter(r -> r.getPeriodStart().before(event.getMoment())
+                        && r.getPeriodStop().after(event.getMoment())
+                        && r.getRoute().contains(event.getTarget()))
+                .findAny();
+        if (overlap.isPresent()) {
+            Repositories.getH2Repo().insertNotification(event.getId(), overlap.get().getCompany());
+        }
+    }
+
     @Override
     public Event pushEvent(EventProposal proposal) {
         Event event;
@@ -98,6 +111,11 @@ public class DefaultController implements Controller {
         } else {
             event = pushBasicEvent(proposal);
         }
+
+        if (event.getSubject().equals("WARN") || event.getSubject().equals("BREAK")) {
+            sendNotificationToCompanies(event);
+        }
+
         return event;
     }
 
