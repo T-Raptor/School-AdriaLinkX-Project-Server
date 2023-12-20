@@ -292,4 +292,88 @@ class DefaultControllerTest {
         assertNotNull(notifications);
         assertTrue(notifications.isEmpty());
     }
+
+    @Test
+    void pushEventNotification() {
+        // Arrange
+        String company = "Xyzerty";
+        Controller sut = new DefaultController();
+        Reservation reservation = sut.placeReservation(new ReservationProposal(
+                new Timestamp(1000),
+                new Timestamp(2000),
+                "Xyzerty",
+                List.of(4, 5)
+        ));
+        sut.popUnreadNotifications(company);
+
+        // Act
+        sut.pushEvent(new EventProposal(4, new Timestamp(1500), "WARN"));
+
+        // Assert
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+        assertFalse(notifications.isEmpty());
+    }
+
+    @Test
+    void pushEventNoNotificationTooEarly() {
+        // Arrange
+        String company = "Xyzerty";
+        Controller sut = new DefaultController();
+        Reservation reservation = sut.placeReservation(new ReservationProposal(
+                new Timestamp(1000),
+                new Timestamp(2000),
+                "Xyzerty",
+                List.of(4, 5)
+        ));
+        sut.popUnreadNotifications(company);
+
+        // Act
+        sut.pushEvent(new EventProposal(4, new Timestamp(500), "WARN"));
+
+        // Assert
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+        assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    void pushEventNoNotificationTooLate() {
+        // Arrange
+        String company = "Xyzerty";
+        Controller sut = new DefaultController();
+        Reservation reservation = sut.placeReservation(new ReservationProposal(
+                new Timestamp(1000),
+                new Timestamp(2000),
+                "Xyzerty",
+                List.of(4, 5)
+        ));
+        sut.popUnreadNotifications(company);
+
+        // Act
+        sut.pushEvent(new EventProposal(4, new Timestamp(2500), "WARN"));
+
+        // Assert
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+        assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    void pushEventNoNotificationWrongSubject() {
+        // Arrange
+        String company = "Xyzerty";
+        Controller sut = new DefaultController();
+        Reservation reservation = sut.placeReservation(new ReservationProposal(
+                new Timestamp(1000),
+                new Timestamp(2000),
+                "Macroogle",
+                List.of(4, 5)
+        ));
+        sut.popUnreadNotifications(company);
+
+        // Act
+        sut.pushEvent(new EventProposal(4, new Timestamp(500), "WARN"));
+
+        // Assert
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+        assertTrue(notifications.isEmpty());
+    }
 }
