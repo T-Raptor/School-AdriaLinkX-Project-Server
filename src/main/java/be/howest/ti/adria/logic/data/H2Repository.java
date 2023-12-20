@@ -1,7 +1,5 @@
-package be.howest.ti.adria.logic.data.repositories.h2;
+package be.howest.ti.adria.logic.data;
 
-import be.howest.ti.adria.logic.data.SqlConsumer;
-import be.howest.ti.adria.logic.data.SqlFunction;
 import be.howest.ti.adria.logic.data.repositories.*;
 import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.logic.domain.observables.*;
