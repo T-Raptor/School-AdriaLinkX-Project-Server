@@ -1,5 +1,6 @@
 package be.howest.ti.adria.logic.data;
 
+import be.howest.ti.adria.logic.data.repositories.h2.H2Repository;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
