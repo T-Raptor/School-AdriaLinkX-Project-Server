@@ -1,5 +1,6 @@
 package be.howest.ti.adria.logic.data;
 
+import be.howest.ti.adria.logic.data.repositories.NotificationRepository;
 import be.howest.ti.adria.logic.domain.Notification;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
