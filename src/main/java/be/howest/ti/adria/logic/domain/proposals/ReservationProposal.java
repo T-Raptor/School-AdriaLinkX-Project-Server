@@ -1,4 +1,4 @@
-package be.howest.ti.adria.logic.domain;
+package be.howest.ti.adria.logic.domain.proposals;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

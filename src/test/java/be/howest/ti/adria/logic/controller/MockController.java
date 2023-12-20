@@ -1,6 +1,10 @@
 package be.howest.ti.adria.logic.controller;
 
 import be.howest.ti.adria.logic.domain.*;
+import be.howest.ti.adria.logic.domain.proposals.EventProposal;
+import be.howest.ti.adria.logic.domain.proposals.LocalEventProposal;
+import be.howest.ti.adria.logic.domain.proposals.ReservationProposal;
+import be.howest.ti.adria.logic.domain.proposals.ShuttleProposal;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
