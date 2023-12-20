@@ -1,6 +1,6 @@
 package be.howest.ti.adria.logic.data;
 
-import be.howest.ti.adria.logic.domain.Shuttle;
+import be.howest.ti.adria.logic.domain.observables.Shuttle;
 
 import java.util.List;
 

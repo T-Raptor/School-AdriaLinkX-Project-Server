@@ -1,7 +1,7 @@
 package be.howest.ti.adria.logic.data;
 
-import be.howest.ti.adria.logic.domain.Reservation;
-import be.howest.ti.adria.logic.domain.Track;
+import be.howest.ti.adria.logic.domain.observables.Reservation;
+import be.howest.ti.adria.logic.domain.observables.Track;
 
 import java.sql.Timestamp;
 import java.util.List;

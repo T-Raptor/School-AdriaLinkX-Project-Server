@@ -1,6 +1,7 @@
 package be.howest.ti.adria.logic.data;
 
 import be.howest.ti.adria.logic.domain.*;
+import be.howest.ti.adria.logic.domain.observables.*;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.h2.tools.Server;
 
