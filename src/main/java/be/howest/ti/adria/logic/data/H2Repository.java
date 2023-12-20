@@ -30,6 +30,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     private static final String COLUMN_LATITUDE = "latitude";
     private static final String COLUMN_LONGITUDE = "longitude";
+    private static final String COLUMN_COMPANY = "company";
 
     private static final String SQL_INSERT_OBSERVABLE = "insert into observables values ();";
 
@@ -366,7 +367,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 rs -> {
                     int reservationId = rs.getInt("id");
                     List<Track> route = getReservationTracks(reservationId);
-                    return new Reservation(reservationId, rs.getTimestamp("period_start"), rs.getTimestamp("period_stop"), rs.getString("company"), route);
+                    return new Reservation(reservationId, rs.getTimestamp("period_start"), rs.getTimestamp("period_stop"), rs.getString(COLUMN_COMPANY), route);
                 }
         );
     }
@@ -379,7 +380,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 rs -> {
                     int reservationId = rs.getInt("id");
                     List<Track> route = getReservationTracks(reservationId);
-                    return new Reservation(reservationId, rs.getTimestamp("period_start"), rs.getTimestamp("period_stop"), rs.getString("company"), route);
+                    return new Reservation(reservationId, rs.getTimestamp("period_start"), rs.getTimestamp("period_stop"), rs.getString(COLUMN_COMPANY), route);
                 }
         );
     }
@@ -585,7 +586,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         return getRows(
                 SQL_SELECT_NOTIFICATIONS,
                 stmt -> { },
-                rs -> new Notification(getEvent(rs.getInt("event")), rs.getString("company"), rs.getBoolean("read"))
+                rs -> new Notification(getEvent(rs.getInt("event")), rs.getString(COLUMN_COMPANY), rs.getBoolean("read"))
         );
     }
 
