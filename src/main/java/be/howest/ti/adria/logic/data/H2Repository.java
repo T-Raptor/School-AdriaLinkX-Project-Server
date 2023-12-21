@@ -194,12 +194,8 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
             stmt.executeUpdate();
 
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return processor.apply(generatedKeys);
-                }
-                else {
-                    throw new SQLException("Creating row failed, no ID obtained.");
-                }
+                generatedKeys.next();
+                return processor.apply(generatedKeys);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Failed to create row.", ex);
