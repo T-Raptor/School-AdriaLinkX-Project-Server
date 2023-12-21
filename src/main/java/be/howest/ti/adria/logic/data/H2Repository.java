@@ -103,16 +103,16 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
     private String readFile(String fileName) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
-        if (inputStream == null)
-            throw new RepositoryException("Could not read file: " + fileName);
-
-        return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            if (inputStream == null)
+                throw new RepositoryException("Could not read file: " + fileName);
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
 
     public void cleanUp() {
-        if (dbWebConsole != null && dbWebConsole.isRunning(false))
+        if (dbWebConsole.isRunning(false))
             dbWebConsole.stop();
 
         try {
@@ -138,7 +138,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
 
-    private <T> T getRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+    public <T> T getRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
         try (
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(statement)
@@ -157,7 +157,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
     }
 
-    private <T> List<T> getRows(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+    public <T> List<T> getRows(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
         try (
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(statement)
@@ -176,7 +176,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
     }
 
-    private <T> T insertRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+    public <T> T insertRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -201,7 +201,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
     }
 
-    private void updateRow(String statement, SqlConsumer<PreparedStatement> configurator) {
+    public void updateRow(String statement, SqlConsumer<PreparedStatement> configurator) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(statement)) {
 
