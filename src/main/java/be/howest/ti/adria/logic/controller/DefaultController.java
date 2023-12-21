@@ -3,10 +3,7 @@ package be.howest.ti.adria.logic.controller;
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.logic.domain.observables.*;
-import be.howest.ti.adria.logic.domain.proposals.EventProposal;
-import be.howest.ti.adria.logic.domain.proposals.LocalEventProposal;
-import be.howest.ti.adria.logic.domain.proposals.ReservationProposal;
-import be.howest.ti.adria.logic.domain.proposals.ShuttleProposal;
+import be.howest.ti.adria.logic.domain.proposals.*;
 
 import java.util.List;
 import java.util.Optional;

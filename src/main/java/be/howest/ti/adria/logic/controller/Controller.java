@@ -5,6 +5,7 @@ import be.howest.ti.adria.logic.domain.observables.Reservation;
 import be.howest.ti.adria.logic.domain.observables.Shuttle;
 import be.howest.ti.adria.logic.domain.observables.Station;
 import be.howest.ti.adria.logic.domain.observables.Track;
+import be.howest.ti.adria.logic.domain.proposals.EventFilter;
 import be.howest.ti.adria.logic.domain.proposals.EventProposal;
 import be.howest.ti.adria.logic.domain.proposals.ReservationProposal;
 import be.howest.ti.adria.logic.domain.proposals.ShuttleProposal;
