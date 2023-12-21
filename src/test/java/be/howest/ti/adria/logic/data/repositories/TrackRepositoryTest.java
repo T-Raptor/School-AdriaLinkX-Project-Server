@@ -1,7 +1,5 @@
 package be.howest.ti.adria.logic.data.repositories;
 
-import be.howest.ti.adria.logic.data.repositories.StationRepository;
-import be.howest.ti.adria.logic.data.repositories.TrackRepository;
 import be.howest.ti.adria.logic.domain.observables.Station;
 import be.howest.ti.adria.logic.domain.observables.Track;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +41,6 @@ public abstract class TrackRepositoryTest {
     void updateTrack() {
         // Arrange
         int id = 4;
-        String company = "Macrosoft";
         Station station1 = stationRepository.getStation(3);
         Station station2 = stationRepository.getStation(1);
 
@@ -63,7 +60,6 @@ public abstract class TrackRepositoryTest {
     @Test
     void insertTrack() {
         // Arrange
-        String company = "Macrosoft";
         Station station1 = stationRepository.getStation(3);
         Station station2 = stationRepository.getStation(1);
 

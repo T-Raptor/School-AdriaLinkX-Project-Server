@@ -2,24 +2,16 @@ package be.howest.ti.adria.logic.data.repositories.h2;
 
 import be.howest.ti.adria.logic.data.H2Repository;
 import be.howest.ti.adria.logic.data.Repositories;
-import be.howest.ti.adria.logic.data.repositories.StationRepository;
-import be.howest.ti.adria.logic.data.repositories.StationRepositoryTest;
-import be.howest.ti.adria.logic.data.repositories.TrackRepositoryTest;
 import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,7 +69,7 @@ class H2RepositoryTest {
     }
 
     @Test
-    void generateDataAdditional() throws IOException {
+    void generateDataAdditional() {
         // Arrange
         List<String> resources = List.of("goodsql.sql");
 
@@ -89,7 +81,7 @@ class H2RepositoryTest {
     }
 
     @Test
-    void generateDataBadSqlLogs() throws IOException {
+    void generateDataBadSqlLogs() {
         // Arrange
         List<String> resources = List.of("badsql.sql");
 
@@ -101,7 +93,7 @@ class H2RepositoryTest {
     }
 
     @Test
-    void generateDataNotFoundThrows() throws IOException {
+    void generateDataNotFoundThrows() {
         // Arrange
         List<String> resources = List.of("notfound.sql");
 
@@ -152,8 +144,6 @@ class H2RepositoryTest {
     @Test
     void updateRowThrows() {
         // Arrange
-        int retValue = 5;
-
         // Act / Assert
         assertThrows(RepositoryException.class, () -> repository.updateRow("update table set column = ? where column =;", stmt -> { }));
     }
@@ -161,8 +151,6 @@ class H2RepositoryTest {
     @Test
     void deleteRowThrows() {
         // Arrange
-        int retValue = 5;
-
         // Act / Assert
         assertThrows(RepositoryException.class, () -> repository.deleteRow("delete from table where column =;", stmt -> { }));
     }

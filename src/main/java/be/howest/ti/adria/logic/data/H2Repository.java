@@ -97,7 +97,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         String createDbSql = readFile(fileName);
         try (
                 Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(createDbSql);
+                PreparedStatement stmt = conn.prepareStatement(createDbSql)
         ) {
             stmt.executeUpdate();
         }
@@ -377,8 +377,8 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
 
-    private boolean insertReservationTrack(int reservationId, int trackId) {
-        return insertRow(
+    private void insertReservationTrack(int reservationId, int trackId) {
+        insertRow(
                 SQL_INSERT_RESERVATION_TRACK,
                 stmt -> {
                     stmt.setInt(1, reservationId);

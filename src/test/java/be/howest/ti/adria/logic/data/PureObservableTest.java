@@ -3,12 +3,8 @@ package be.howest.ti.adria.logic.data;
 import be.howest.ti.adria.logic.domain.PureObservable;
 import be.howest.ti.adria.logic.domain.observables.Station;
 import be.howest.ti.adria.logic.domain.observables.UnknownObservable;
-import be.howest.ti.adria.logic.exceptions.RepositoryException;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;

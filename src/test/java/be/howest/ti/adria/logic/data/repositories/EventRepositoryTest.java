@@ -1,8 +1,5 @@
 package be.howest.ti.adria.logic.data.repositories;
 
-import be.howest.ti.adria.logic.data.repositories.EventRepository;
-import be.howest.ti.adria.logic.data.repositories.ShuttleRepository;
-import be.howest.ti.adria.logic.data.repositories.TrackRepository;
 import be.howest.ti.adria.logic.domain.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

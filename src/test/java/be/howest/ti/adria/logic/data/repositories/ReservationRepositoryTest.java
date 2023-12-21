@@ -1,7 +1,5 @@
 package be.howest.ti.adria.logic.data.repositories;
 
-import be.howest.ti.adria.logic.data.repositories.ReservationRepository;
-import be.howest.ti.adria.logic.data.repositories.TrackRepository;
 import be.howest.ti.adria.logic.domain.observables.Reservation;
 import be.howest.ti.adria.logic.domain.observables.Track;
 import org.junit.jupiter.api.Assertions;
@@ -46,8 +44,8 @@ public abstract class ReservationRepositoryTest {
     void insertReservation() {
         // Arrange
         String company = "Macrosoft";
-        Timestamp periodStart = new Timestamp(2024, 9, 12, 20, 0, 0, 0);
-        Timestamp periodStop = new Timestamp(2024, 9, 12, 23, 0, 0, 0);
+        Timestamp periodStart = Timestamp.valueOf("2024-09-12 20:00:00");
+        Timestamp periodStop = Timestamp.valueOf("2024-09-12 23:00:00");
         List<Track> route = trackRepository.getTracks();
 
         // Act
@@ -65,8 +63,8 @@ public abstract class ReservationRepositoryTest {
     void deleteReservation() {
         // Arrange
         String company = "Macrosoft";
-        Timestamp periodStart = new Timestamp(2024, 9, 12, 20, 0, 0, 0);
-        Timestamp periodStop = new Timestamp(2024, 9, 12, 23, 0, 0, 0);
+        Timestamp periodStart = Timestamp.valueOf("2024-09-12 20:00:00");
+        Timestamp periodStop = Timestamp.valueOf("2024-09-12 23:00:00");
         List<Track> route = trackRepository.getTracks();
         Reservation reservation = repository.insertReservation(periodStart, periodStop, company, route);
 

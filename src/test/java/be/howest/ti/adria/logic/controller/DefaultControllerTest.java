@@ -24,7 +24,7 @@ class DefaultControllerTest {
     @BeforeAll
     void setupTestSuite() {
         Repositories.shutdown();
-        JsonObject dbProperties = new JsonObject(Map.of("url", "jdbc:h2:./db-12",
+        JsonObject dbProperties = new JsonObject(Map.of("url", URL,
                 "username", "",
                 "password", "",
                 "webconsole.port", 9000));
@@ -295,7 +295,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",
@@ -316,7 +316,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",
@@ -337,7 +337,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",
@@ -358,7 +358,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",
@@ -379,7 +379,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Macroogle",
@@ -400,7 +400,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",

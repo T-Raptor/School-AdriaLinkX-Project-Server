@@ -95,9 +95,7 @@ public class DefaultController implements Controller {
                         && r.getPeriodStop().after(event.getMoment())
                         && r.getRoute().contains(event.getTarget()))
                 .findAny();
-        if (overlap.isPresent()) {
-            Repositories.getH2Repo().insertNotification(event.getId(), overlap.get().getCompany());
-        }
+        overlap.ifPresent(reservation -> Repositories.getH2Repo().insertNotification(event.getId(), reservation.getCompany()));
     }
 
     @Override
