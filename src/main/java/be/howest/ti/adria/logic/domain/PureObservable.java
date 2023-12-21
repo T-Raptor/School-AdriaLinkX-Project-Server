@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public abstract class PureObservable implements Observable {
     @Override
+    @SuppressWarnings("java:S2097")
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
