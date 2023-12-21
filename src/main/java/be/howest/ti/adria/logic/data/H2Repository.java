@@ -191,11 +191,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
              PreparedStatement stmt = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 
             configurator.accept(stmt);
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating row failed, no rows affected.");
-            }
+            stmt.executeUpdate();
 
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
