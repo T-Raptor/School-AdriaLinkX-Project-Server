@@ -2,7 +2,7 @@ package be.howest.ti.adria.web.bridge;
 
 import be.howest.ti.adria.logic.controller.DefaultController;
 import be.howest.ti.adria.logic.controller.Controller;
-import be.howest.ti.adria.logic.domain.proposals.EventFilter;
+import be.howest.ti.adria.logic.domain.EventFilter;
 import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.logic.domain.observables.Reservation;
 import be.howest.ti.adria.logic.domain.observables.Shuttle;
