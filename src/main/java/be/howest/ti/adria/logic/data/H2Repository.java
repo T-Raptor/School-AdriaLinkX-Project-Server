@@ -75,6 +75,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private final String password;
     private final String url;
 
+
     public H2Repository(String url, String username, String password, int console) {
         try {
             this.username = username;
@@ -125,11 +126,20 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
     public void generateData() {
+        generateData(List.of());
+    }
+
+    public boolean generateData(List<String> additionalResources) {
         try {
             executeScript("db-create.sql");
             executeScript("db-populate.sql");
+            for (String resource : additionalResources) {
+                executeScript(resource);
+            }
+            return true;
         } catch (IOException | SQLException ex) {
             LOGGER.log(Level.SEVERE, "Execution of database scripts failed.", ex);
+            return false;
         }
     }
 

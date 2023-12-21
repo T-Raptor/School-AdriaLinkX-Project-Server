@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -73,6 +74,39 @@ class H2RepositoryTest {
 
         // Assert
         assertTrue(threw, "cleanUp did not throw RepositoryException");
+    }
+
+    @Test
+    void generateDataAdditional() throws IOException {
+        // Arrange
+        List<String> resources = List.of("goodsql.sql");
+
+        // Act
+        boolean result = repository.generateData(resources);
+
+        // Assert
+        assertTrue(result, "Data generation failed");
+    }
+
+    @Test
+    void generateDataBadSqlLogs() throws IOException {
+        // Arrange
+        List<String> resources = List.of("badsql.sql");
+
+        // Act
+        boolean result = repository.generateData(resources);
+
+        // Assert
+        assertFalse(result, "Data generation did not fail");
+    }
+
+    @Test
+    void generateDataNotFoundThrows() throws IOException {
+        // Arrange
+        List<String> resources = List.of("notfound.sql");
+
+        // Act / Assert
+        assertThrows(RepositoryException.class, () -> repository.generateData(resources));
     }
 
 
