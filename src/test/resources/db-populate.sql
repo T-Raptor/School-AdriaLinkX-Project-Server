@@ -31,14 +31,16 @@ INSERT INTO shuttles VALUES (SCOPE_IDENTITY(), 'AEFF-B217-A4FB');
 INSERT INTO observables VALUES (10);
 INSERT INTO shuttles VALUES (SCOPE_IDENTITY(), 'A21F-2936-24AC');
 
-INSERT INTO events (target, moment, class, reason) VALUES (4, '2022-04-12 9:30:10', 'WARN', 'Moose sighted');
-INSERT INTO events (target, moment, class, reason) VALUES (5, '2022-05-12 9:40:09', 'BREAK', 'Giant rock');
+INSERT INTO events (id, target, moment, class, reason) VALUES (1, 4, '2022-04-12 9:30:10', 'WARN', 'Moose sighted');
+INSERT INTO events (id, target, moment, class, reason) VALUES (2, 5, '2022-05-12 9:40:09', 'BREAK', 'Giant rock');
 
-INSERT INTO events (target, moment, class, local, latitude, longitude)
-VALUES (9, '2022-05-14 10:30:21', 'MOVE', true, 3.583005176613367, 49.366870654264495);
+INSERT INTO events (id, target, moment, class, local, latitude, longitude)
+VALUES (3, 9, '2022-05-14 10:30:21', 'MOVE', true, 3.583005176613367, 49.366870654264495);
 
-INSERT INTO events (target, moment, class, local, latitude, longitude)
-VALUES (10, '2022-05-17 10:30:21', 'MOVE', true, 13.583005176613367, 49.366870654264495);
+INSERT INTO events (id, target, moment, class, local, latitude, longitude)
+VALUES (4, 10, '2022-05-17 10:30:21', 'MOVE', true, 13.583005176613367, 49.366870654264495);
+
+INSERT INTO events (id, target, moment, class, reason) VALUES (5, 5, '2022-05-13 9:40:09', 'BREAK', 'Very big pebble');
 
 INSERT INTO notifications (event, company) VALUES (1, 'Macrosoft');
 INSERT INTO notifications (event, company) VALUES (2, 'Hoogle');
