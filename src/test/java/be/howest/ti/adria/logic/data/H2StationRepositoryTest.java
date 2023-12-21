@@ -1,5 +1,6 @@
 package be.howest.ti.adria.logic.data;
 
+import be.howest.ti.adria.logic.data.repositories.StationRepositoryTest;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 

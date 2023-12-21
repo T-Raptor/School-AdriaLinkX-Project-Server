@@ -1,4 +1,4 @@
-package be.howest.ti.adria.logic.data;
+package be.howest.ti.adria.logic.data.repositories;
 
 import be.howest.ti.adria.logic.data.repositories.EventRepository;
 import be.howest.ti.adria.logic.data.repositories.ShuttleRepository;
