@@ -129,6 +129,18 @@ class H2RepositoryTest {
     }
 
     @Test
+    void getNoRow() {
+        // Arrange
+        int retValue = 5;
+
+        // Act
+        Integer actual = repository.getRow("select * from observables where id = -1987452;", stmt -> { }, rs -> retValue);
+
+        // Assert
+        assertNull(actual);
+    }
+
+    @Test
     void insertRowThrows() {
         // Arrange
         int retValue = 5;
