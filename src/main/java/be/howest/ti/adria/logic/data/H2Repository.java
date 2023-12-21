@@ -149,21 +149,11 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
 
     public <T> T getRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
-        try (
-                Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(statement)
-        ) {
-            configurator.accept(stmt);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return processor.apply(rs);
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to get rows.", ex);
-            throw new RepositoryException("Could not get rows.");
+        List<T> rows = getRows(statement, configurator, processor);
+        if (rows.isEmpty()) {
+            return null;
+        } else {
+            return rows.get(0);
         }
     }
 
