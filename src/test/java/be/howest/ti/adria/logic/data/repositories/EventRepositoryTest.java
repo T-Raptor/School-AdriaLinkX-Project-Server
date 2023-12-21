@@ -78,7 +78,7 @@ public abstract class EventRepositoryTest {
     void insertEvent() {
         // Arrange
         Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
 
         // Act
@@ -95,7 +95,7 @@ public abstract class EventRepositoryTest {
     void insertEventWithReason() {
         // Arrange
         Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         String reason = "Snorlax sleepin on da track";
 
@@ -114,7 +114,7 @@ public abstract class EventRepositoryTest {
     void insertLocalEvent() {
         // Arrange
         Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         double latitude = 45;
         double longitude = 70;
@@ -133,7 +133,7 @@ public abstract class EventRepositoryTest {
     void insertLocalEventWithReason() {
         // Arrange
         Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         double latitude = 45;
         double longitude = 70;
