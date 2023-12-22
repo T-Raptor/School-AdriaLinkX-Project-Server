@@ -67,8 +67,8 @@ public class MockController implements Controller {
     @Override
     public List<Event> searchEvents(EventFilter filter) {
         List<Event> events = new ArrayList<>();
-        events.add(new Event(2, new UnknownObservable(1), new Timestamp(1000), "BREAK"));
-        events.add(new Event(3, new UnknownObservable(3), new Timestamp(1500), "WARN"));
+        events.add(new Event(2, new Shuttle(1, "BAAA-BBBB-CCCC"), new Timestamp(1000), "BREAK"));
+        events.add(new Event(3, new Shuttle(3, "CAAA-BBBB-CCCC"), new Timestamp(1500), "WARN"));
         events.add(new LocalEvent(4, new Shuttle(2, "AAAA-BBBB-CCCC"), new Timestamp(2000), "MOVE", 20, 10));
         return events
                 .stream()
@@ -85,7 +85,7 @@ public class MockController implements Controller {
         if (proposal instanceof LocalEventProposal localProposal) {
             event = new LocalEvent(
                     1,
-                    new UnknownObservable(localProposal.getTarget()),
+                    new Shuttle(localProposal.getTarget(), "AAAA-BBBB-CCCC"),
                     proposal.getMoment(), proposal.getSubject(),
                     localProposal.getLatitude(),
                     localProposal.getLongitude(),
@@ -94,7 +94,7 @@ public class MockController implements Controller {
         } else {
             event = new Event(
                     1,
-                    new UnknownObservable(proposal.getTarget()),
+                    new Shuttle(proposal.getTarget(), "AAAA-BBBB-CCCC"),
                     proposal.getMoment(),
                     proposal.getSubject(),
                     proposal.getReason()
@@ -107,7 +107,7 @@ public class MockController implements Controller {
     @Override
     public List<Notification> popUnreadNotifications(String company) {
         return List.of(
-                new Notification(new Event(1, new UnknownObservable(1), new Timestamp(1000), "WARN"), company, false)
+                new Notification(new Event(1, new Shuttle(1, "AAAA-BBBB-CCCC"), new Timestamp(1000), "WARN"), company, false)
         );
     }
 }
