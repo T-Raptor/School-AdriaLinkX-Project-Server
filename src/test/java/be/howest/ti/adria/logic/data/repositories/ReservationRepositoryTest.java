@@ -1,7 +1,6 @@
 package be.howest.ti.adria.logic.data.repositories;
 
 import be.howest.ti.adria.logic.domain.observables.Reservation;
-import be.howest.ti.adria.logic.domain.observables.Track;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +45,7 @@ public abstract class ReservationRepositoryTest {
         String company = "Macrosoft";
         Timestamp periodStart = Timestamp.valueOf("2024-09-12 20:00:00");
         Timestamp periodStop = Timestamp.valueOf("2024-09-12 23:00:00");
-        List<Track> route = trackRepository.getTracks();
+        List<Integer> route = List.of(4, 5);
 
         // Act
         Reservation reservation = repository.insertReservation(periodStart, periodStop, company, route);
@@ -56,7 +55,9 @@ public abstract class ReservationRepositoryTest {
         Assertions.assertEquals(company, reservation.getCompany());
         Assertions.assertEquals(periodStart, reservation.getPeriodStart());
         Assertions.assertEquals(periodStop, reservation.getPeriodStop());
-        Assertions.assertEquals(route, reservation.getRoute());
+
+        Assertions.assertEquals(route.size(), reservation.getRoute().size());
+        Assertions.assertTrue(reservation.getRoute().stream().allMatch(track -> route.contains(track.getId())));
     }
 
     @Test
@@ -65,7 +66,7 @@ public abstract class ReservationRepositoryTest {
         String company = "Macrosoft";
         Timestamp periodStart = Timestamp.valueOf("2024-09-12 20:00:00");
         Timestamp periodStop = Timestamp.valueOf("2024-09-12 23:00:00");
-        List<Track> route = trackRepository.getTracks();
+        List<Integer> route = List.of(4, 5);
         Reservation reservation = repository.insertReservation(periodStart, periodStop, company, route);
 
         // Act

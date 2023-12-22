@@ -52,7 +52,7 @@ public class DefaultController implements Controller {
                 proposal.getPeriodStart(),
                 proposal.getPeriodStop(),
                 proposal.getCompany(),
-                proposal.getRoute().stream().map(x -> Repositories.getH2Repo().getTrack(x)).toList()
+                proposal.getRoute()
         );
     }
 

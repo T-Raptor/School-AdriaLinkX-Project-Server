@@ -36,15 +36,9 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     private static final String SQL_SELECT_STATIONS = "select observable_id as id, name, latitude, longitude from stations;";
     private static final String SQL_SELECT_STATION = "select observable_id as id, name, latitude, longitude from stations where observable_id = ?;";
-    private static final String SQL_INSERT_STATION = "insert into stations values (?, ?, ?, ?);";
-    private static final String SQL_UPDATE_STATION = "update stations set `name` = ?, `latitude` = ?, `longitude` = ? where observable_id = ?;";
-    private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
 
     private static final String SQL_SELECT_TRACKS = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id;";
     private static final String SQL_SELECT_TRACK = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id where t.observable_id = ?;";
-    private static final String SQL_INSERT_TRACK = "insert into tracks values (?, ?, ?);";
-    private static final String SQL_UPDATE_TRACK = "update tracks set `station1` = ?, `station2` = ? where observable_id = ?;";
-    private static final String SQL_DELETE_TRACK = "delete from tracks where observable_id = ?;";
 
     private static final String SQL_SELECT_RESERVATIONS = "select observable_id as id, period_start, period_stop, company from reservations;";
     private static final String SQL_SELECT_RESERVATION_TRACKS = "select reservation, track from reservation_tracks where reservation = ?;";
@@ -244,43 +238,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
 
-    @Override
-    public Station insertStation(String name, double latitude, double longitude) {
-        int id = insertObservable();
-        return insertRow(
-                SQL_INSERT_STATION,
-                stmt -> {
-                    stmt.setInt(1, id);
-                    stmt.setString(2, name);
-                    stmt.setDouble(3, latitude);
-                    stmt.setDouble(4, longitude);
-                },
-                rs -> new Station(id, name, latitude, longitude)
-        );
-    }
-
-    @Override
-    public Station updateStation(int id, String name, double latitude, double longitude) {
-        updateRow(
-                SQL_UPDATE_STATION,
-                stmt -> {
-                    stmt.setString(1, name);
-                    stmt.setDouble(2, latitude);
-                    stmt.setDouble(3, longitude);
-                    stmt.setInt(4, id);
-                }
-        );
-        return new Station(id, name, latitude, longitude);
-    }
-
-    @Override
-    public void deleteStation(int id) {
-        deleteRow(
-                SQL_DELETE_STATION,
-                stmt -> stmt.setInt(1, id)
-        );
-    }
-
 
     @Override
     public List<Track> getTracks() {
@@ -308,41 +265,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
 
-    @Override
-    public Track insertTrack(Station station1, Station station2) {
-        int id = insertObservable();
-        return insertRow(
-                SQL_INSERT_TRACK,
-                stmt -> {
-                    stmt.setInt(1, id);
-                    stmt.setInt(2, station1.getId());
-                    stmt.setInt(3, station2.getId());
-                },
-                rs -> new Track(id, station1, station2)
-        );
-    }
-
-    @Override
-    public Track updateTrack(int id, Station station1, Station station2) {
-        updateRow(
-                SQL_UPDATE_TRACK,
-                stmt -> {
-                    stmt.setInt(1, station1.getId());
-                    stmt.setInt(2, station2.getId());
-                    stmt.setInt(3, id);
-                }
-        );
-        return new Track(id, station1, station2);
-    }
-
-    @Override
-    public void deleteTrack(int id) {
-        deleteRow(
-                SQL_DELETE_TRACK,
-                stmt -> stmt.setInt(1, id)
-        );
-    }
-
 
     private List<Track> getReservationTracks(int reservationId) {
         return getRows(
@@ -351,6 +273,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 rs -> getTrack(rs.getInt("track"))
         );
     }
+
     @Override
     public List<Reservation> getReservations() {
         return getRows(
@@ -388,8 +311,9 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
     @Override
-    public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
+    public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Integer> route) {
         int id = insertObservable();
+
         Reservation reservation = insertRow(
                 SQL_INSERT_RESERVATION,
                 stmt -> {
@@ -398,11 +322,11 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setTimestamp(3, periodStop);
                     stmt.setString(4, company);
                 },
-                rs -> new Reservation(id, periodStart, periodStop, company, route)
+                rs -> new Reservation(id, periodStart, periodStop, company, route.stream().map(this::getTrack).toList())
         );
 
-        for (Track track : route) {
-            insertReservationTrack(id, track.getId());
+        for (int track : route) {
+            insertReservationTrack(id, track);
         }
 
         return reservation;

@@ -1,6 +1,5 @@
 package be.howest.ti.adria.logic.data.repositories;
 
-import be.howest.ti.adria.logic.domain.observables.Station;
 import be.howest.ti.adria.logic.domain.observables.Track;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,54 +34,5 @@ public abstract class TrackRepositoryTest {
         Assertions.assertNotNull(track);
         Assertions.assertNotNull(track.getStation1());
         Assertions.assertNotNull(track.getStation2());
-    }
-
-    @Test
-    void updateTrack() {
-        // Arrange
-        int id = 4;
-        Station station1 = stationRepository.getStation(3);
-        Station station2 = stationRepository.getStation(1);
-
-        // Act
-        Track track = repository.updateTrack(
-                id,
-                station1,
-                station2
-        );
-
-        // Assert
-        Assertions.assertNotNull(track);
-        Assertions.assertEquals(station1, track.getStation1());
-        Assertions.assertEquals(station2, track.getStation2());
-    }
-
-    @Test
-    void insertTrack() {
-        // Arrange
-        Station station1 = stationRepository.getStation(3);
-        Station station2 = stationRepository.getStation(1);
-
-        // Act
-        Track track = repository.insertTrack(station1, station2);
-
-        // Assert
-        Assertions.assertNotNull(track);
-        Assertions.assertEquals(station1, track.getStation1());
-        Assertions.assertEquals(station2, track.getStation2());
-    }
-
-    @Test
-    void deleteTrack() {
-        // Arrange
-        Station station1 = stationRepository.getStation(3);
-        Station station2 = stationRepository.getStation(1);
-        Track track = repository.insertTrack(station1, station2);
-
-        // Act
-        repository.deleteTrack(track.getId());
-
-        // Assert
-        Assertions.assertNull(repository.getTrack(track.getId()));
     }
 }
