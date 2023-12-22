@@ -93,7 +93,7 @@ public class DefaultController implements Controller {
                 .stream()
                 .filter(r -> r.getPeriodStart().before(event.getMoment())
                         && r.getPeriodStop().after(event.getMoment())
-                        && r.getRoute().contains(event.getTarget()))
+                        && r.getRoute().stream().anyMatch(track -> track.getId() == event.getTarget().getId()))
                 .findAny();
         overlap.ifPresent(reservation -> Repositories.getH2Repo().insertNotification(event.getId(), reservation.getCompany()));
     }

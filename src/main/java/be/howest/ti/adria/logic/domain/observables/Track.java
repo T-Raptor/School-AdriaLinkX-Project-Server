@@ -1,8 +1,8 @@
 package be.howest.ti.adria.logic.domain.observables;
 
-import be.howest.ti.adria.logic.domain.PureObservable;
+import be.howest.ti.adria.logic.domain.Observable;
 
-public class Track extends PureObservable {
+public class Track implements Observable {
     private final int id;
     private final Station station1;
     private final Station station2;
