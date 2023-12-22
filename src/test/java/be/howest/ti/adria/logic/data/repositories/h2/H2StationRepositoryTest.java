@@ -1,11 +1,13 @@
-package be.howest.ti.adria.logic.data;
+package be.howest.ti.adria.logic.data.repositories.h2;
 
+import be.howest.ti.adria.logic.data.Repositories;
+import be.howest.ti.adria.logic.data.repositories.StationRepositoryTest;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Map;
 
-class H2NotificationRepositoryTest extends NotificationRepositoryTest {
+class H2StationRepositoryTest extends StationRepositoryTest {
     private static final String URL = "jdbc:h2:./db-12";
 
 

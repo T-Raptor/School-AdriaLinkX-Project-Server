@@ -1,8 +1,5 @@
-package be.howest.ti.adria.logic.data;
+package be.howest.ti.adria.logic.data.repositories;
 
-import be.howest.ti.adria.logic.data.repositories.EventRepository;
-import be.howest.ti.adria.logic.data.repositories.ShuttleRepository;
-import be.howest.ti.adria.logic.data.repositories.TrackRepository;
 import be.howest.ti.adria.logic.domain.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -77,8 +74,8 @@ public abstract class EventRepositoryTest {
     @Test
     void insertEvent() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        int target = 4;
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
 
         // Act
@@ -86,7 +83,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
     }
@@ -94,8 +91,8 @@ public abstract class EventRepositoryTest {
     @Test
     void insertEventWithReason() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        int target = 4;
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         String reason = "Snorlax sleepin on da track";
 
@@ -104,7 +101,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
         Assertions.assertEquals(reason, event.getReason());
@@ -113,8 +110,8 @@ public abstract class EventRepositoryTest {
     @Test
     void insertLocalEvent() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        int target = 4;
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         double latitude = 45;
         double longitude = 70;
@@ -124,7 +121,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
     }
@@ -132,8 +129,8 @@ public abstract class EventRepositoryTest {
     @Test
     void insertLocalEventWithReason() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
-        Timestamp moment = new Timestamp(2023, 8, 19, 12, 0, 5, 0);
+        int target = 4;
+        Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         double latitude = 45;
         double longitude = 70;
@@ -144,7 +141,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
         Assertions.assertEquals(reason, event.getReason());

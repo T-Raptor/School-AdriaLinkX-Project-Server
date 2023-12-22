@@ -1,11 +1,13 @@
-package be.howest.ti.adria.logic.data;
+package be.howest.ti.adria.logic.data.repositories.h2;
 
+import be.howest.ti.adria.logic.data.Repositories;
+import be.howest.ti.adria.logic.data.repositories.EventRepositoryTest;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Map;
 
-public class H2ShuttleRepositoryTest extends ShuttleRepositoryTest {
+class H2EventRepositoryTest extends EventRepositoryTest {
     private static final String URL = "jdbc:h2:./db-12";
 
 
@@ -17,6 +19,8 @@ public class H2ShuttleRepositoryTest extends ShuttleRepositoryTest {
                 "password", "",
                 "webconsole.port", 9000 ));
         Repositories.configure(dbProperties);
+        this.trackRepository = Repositories.getH2Repo();
+        this.shuttleRepository = Repositories.getH2Repo();
         this.repository = Repositories.getH2Repo();
     }
 }

@@ -25,26 +25,21 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository, NotificationRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository, NotificationRepository, ObservableRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
 
     private static final String COLUMN_LATITUDE = "latitude";
     private static final String COLUMN_LONGITUDE = "longitude";
     private static final String COLUMN_COMPANY = "company";
 
-    private static final String SQL_INSERT_OBSERVABLE = "insert into observables values ();";
+    private static final String SQL_SELECT_OBSERVABLE = "select * from observables where id = ?;";
+    private static final String SQL_INSERT_OBSERVABLE = "insert into observables (subtype) values (?);";
 
     private static final String SQL_SELECT_STATIONS = "select observable_id as id, name, latitude, longitude from stations;";
     private static final String SQL_SELECT_STATION = "select observable_id as id, name, latitude, longitude from stations where observable_id = ?;";
-    private static final String SQL_INSERT_STATION = "insert into stations values (?, ?, ?, ?);";
-    private static final String SQL_UPDATE_STATION = "update stations set `name` = ?, `latitude` = ?, `longitude` = ? where observable_id = ?;";
-    private static final String SQL_DELETE_STATION = "delete from stations where observable_id = ?;";
 
     private static final String SQL_SELECT_TRACKS = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id;";
     private static final String SQL_SELECT_TRACK = "select t.observable_id as id, s1.observable_id as s1_id, s1.name as s1_name, s1.latitude as s1_latitude, s1.longitude as s1_longitude, s2.observable_id as s2_id, s2.name as s2_name, s2.latitude as s2_latitude, s2.longitude as s2_longitude from tracks as t join stations as s1 on station1 = s1.observable_id join stations as s2 on station2 = s2.observable_id where t.observable_id = ?;";
-    private static final String SQL_INSERT_TRACK = "insert into tracks values (?, ?, ?);";
-    private static final String SQL_UPDATE_TRACK = "update tracks set `station1` = ?, `station2` = ? where observable_id = ?;";
-    private static final String SQL_DELETE_TRACK = "delete from tracks where observable_id = ?;";
 
     private static final String SQL_SELECT_RESERVATIONS = "select observable_id as id, period_start, period_stop, company from reservations;";
     private static final String SQL_SELECT_RESERVATION_TRACKS = "select reservation, track from reservation_tracks where reservation = ?;";
@@ -75,6 +70,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     private final String password;
     private final String url;
 
+
     public H2Repository(String url, String username, String password, int console) {
         try {
             this.username = username;
@@ -96,23 +92,23 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         String createDbSql = readFile(fileName);
         try (
                 Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(createDbSql);
+                PreparedStatement stmt = conn.prepareStatement(createDbSql)
         ) {
             stmt.executeUpdate();
         }
     }
 
     private String readFile(String fileName) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
-        if (inputStream == null)
-            throw new RepositoryException("Could not read file: " + fileName);
-
-        return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            if (inputStream == null)
+                throw new RepositoryException("Could not read file: " + fileName);
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
 
     public void cleanUp() {
-        if (dbWebConsole != null && dbWebConsole.isRunning(false))
+        if (dbWebConsole.isRunning(false))
             dbWebConsole.stop();
 
         try {
@@ -125,11 +121,20 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
     public void generateData() {
+        generateData(List.of());
+    }
+
+    public boolean generateData(List<String> additionalResources) {
         try {
             executeScript("db-create.sql");
             executeScript("db-populate.sql");
+            for (String resource : additionalResources) {
+                executeScript(resource);
+            }
+            return true;
         } catch (IOException | SQLException ex) {
             LOGGER.log(Level.SEVERE, "Execution of database scripts failed.", ex);
+            return false;
         }
     }
 
@@ -138,26 +143,16 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
 
-    private <T> T getRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
-        try (
-                Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(statement)
-        ) {
-            configurator.accept(stmt);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return processor.apply(rs);
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to get rows.", ex);
-            throw new RepositoryException("Could not get rows.");
+    public <T> T getRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+        List<T> rows = getRows(statement, configurator, processor);
+        if (rows.isEmpty()) {
+            return null;
+        } else {
+            return rows.get(0);
         }
     }
 
-    private <T> List<T> getRows(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+    public <T> List<T> getRows(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
         try (
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(statement)
@@ -176,24 +171,16 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
     }
 
-    private <T> T insertRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
+    public <T> T insertRow(String statement, SqlConsumer<PreparedStatement> configurator, SqlFunction<ResultSet,T> processor) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 
             configurator.accept(stmt);
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating row failed, no rows affected.");
-            }
+            stmt.executeUpdate();
 
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return processor.apply(generatedKeys);
-                }
-                else {
-                    throw new SQLException("Creating row failed, no ID obtained.");
-                }
+                generatedKeys.next();
+                return processor.apply(generatedKeys);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Failed to create row.", ex);
@@ -201,7 +188,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
     }
 
-    private void updateRow(String statement, SqlConsumer<PreparedStatement> configurator) {
+    public void updateRow(String statement, SqlConsumer<PreparedStatement> configurator) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(statement)) {
 
@@ -225,12 +212,35 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
     }
 
-    private int insertObservable() {
+
+    @Override
+    public <T extends Observable> ObservableInfo insertObservableInfo(Class<T> subtype) {
         return insertRow(
                 SQL_INSERT_OBSERVABLE,
-                stmt -> {},
-                rs -> rs.getInt(1)
+                stmt -> stmt.setString(1, subtype.getSimpleName()),
+                rs -> new ObservableInfo(rs.getInt(1), subtype.getSimpleName())
         );
+    }
+
+    @Override
+    public ObservableInfo getObservableInfo(int id) {
+        return getRow(
+                SQL_SELECT_OBSERVABLE,
+                stmt -> stmt.setInt(1, id),
+                rs -> new ObservableInfo(id, rs.getString("subtype"))
+        );
+    }
+
+    @Override
+    public Observable getObservable(int id) {
+        ObservableInfo observableInfo = getObservableInfo(id);
+        return switch (observableInfo.getSubtype()) {
+            case "Reservation" -> getReservation(id);
+            case "Shuttle" -> getShuttle(id);
+            case "Station" -> getStation(id);
+            case "Track" -> getTrack(id);
+            default -> throw new RepositoryException("Unknown observable subtype");
+        };
     }
 
 
@@ -249,43 +259,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 SQL_SELECT_STATION,
                 stmt -> stmt.setInt(1, id),
                 rs -> new Station(rs.getInt("id"), rs.getString("name"), rs.getDouble(COLUMN_LATITUDE), rs.getDouble(COLUMN_LONGITUDE))
-        );
-    }
-
-    @Override
-    public Station insertStation(String name, double latitude, double longitude) {
-        int id = insertObservable();
-        return insertRow(
-                SQL_INSERT_STATION,
-                stmt -> {
-                    stmt.setInt(1, id);
-                    stmt.setString(2, name);
-                    stmt.setDouble(3, latitude);
-                    stmt.setDouble(4, longitude);
-                },
-                rs -> new Station(id, name, latitude, longitude)
-        );
-    }
-
-    @Override
-    public Station updateStation(int id, String name, double latitude, double longitude) {
-        updateRow(
-                SQL_UPDATE_STATION,
-                stmt -> {
-                    stmt.setString(1, name);
-                    stmt.setDouble(2, latitude);
-                    stmt.setDouble(3, longitude);
-                    stmt.setInt(4, id);
-                }
-        );
-        return new Station(id, name, latitude, longitude);
-    }
-
-    @Override
-    public void deleteStation(int id) {
-        deleteRow(
-                SQL_DELETE_STATION,
-                stmt -> stmt.setInt(1, id)
         );
     }
 
@@ -316,41 +289,6 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
 
-    @Override
-    public Track insertTrack(Station station1, Station station2) {
-        int id = insertObservable();
-        return insertRow(
-                SQL_INSERT_TRACK,
-                stmt -> {
-                    stmt.setInt(1, id);
-                    stmt.setInt(2, station1.getId());
-                    stmt.setInt(3, station2.getId());
-                },
-                rs -> new Track(id, station1, station2)
-        );
-    }
-
-    @Override
-    public Track updateTrack(int id, Station station1, Station station2) {
-        updateRow(
-                SQL_UPDATE_TRACK,
-                stmt -> {
-                    stmt.setInt(1, station1.getId());
-                    stmt.setInt(2, station2.getId());
-                    stmt.setInt(3, id);
-                }
-        );
-        return new Track(id, station1, station2);
-    }
-
-    @Override
-    public void deleteTrack(int id) {
-        deleteRow(
-                SQL_DELETE_TRACK,
-                stmt -> stmt.setInt(1, id)
-        );
-    }
-
 
     private List<Track> getReservationTracks(int reservationId) {
         return getRows(
@@ -359,6 +297,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 rs -> getTrack(rs.getInt("track"))
         );
     }
+
     @Override
     public List<Reservation> getReservations() {
         return getRows(
@@ -385,8 +324,8 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
 
-    private boolean insertReservationTrack(int reservationId, int trackId) {
-        return insertRow(
+    private void insertReservationTrack(int reservationId, int trackId) {
+        insertRow(
                 SQL_INSERT_RESERVATION_TRACK,
                 stmt -> {
                     stmt.setInt(1, reservationId);
@@ -396,8 +335,9 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         );
     }
     @Override
-    public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Track> route) {
-        int id = insertObservable();
+    public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Integer> route) {
+        int id = insertObservableInfo(Reservation.class).getId();
+
         Reservation reservation = insertRow(
                 SQL_INSERT_RESERVATION,
                 stmt -> {
@@ -406,11 +346,11 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setTimestamp(3, periodStop);
                     stmt.setString(4, company);
                 },
-                rs -> new Reservation(id, periodStart, periodStop, company, route)
+                rs -> new Reservation(id, periodStart, periodStop, company, route.stream().map(this::getTrack).toList())
         );
 
-        for (Track track : route) {
-            insertReservationTrack(id, track.getId());
+        for (int track : route) {
+            insertReservationTrack(id, track);
         }
 
         return reservation;
@@ -452,7 +392,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Shuttle insertShuttle(String serial) {
-        int id = insertObservable();
+        int id = insertObservableInfo(Shuttle.class).getId();
         return insertRow(
                 SQL_INSERT_SHUTTLE,
                 stmt -> {
@@ -471,7 +411,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 stmt -> { },
                 rs -> {
                     int id = rs.getInt("id");
-                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Observable observable = getObservable(rs.getInt("target"));
                     Timestamp moment = rs.getTimestamp("moment");
                     String subject = rs.getString("class");
                     String reason = rs.getString("reason");
@@ -500,7 +440,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 stmt -> stmt.setInt(1, id),
                 rs -> {
                     int idRemote = rs.getInt("id");
-                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Observable observable = getObservable(rs.getInt("target"));
                     Timestamp moment = rs.getTimestamp("moment");
                     String subject = rs.getString("class");
                     String reason = rs.getString("reason");
@@ -523,60 +463,60 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
     @Override
-    public Event insertEvent(Observable target, Timestamp moment, String what) {
+    public Event insertEvent(int target, Timestamp moment, String what) {
         return insertRow(
                 SQL_INSERT_EVENT,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                 },
-                rs -> new Event(rs.getInt("id"), target, moment, what)
+                rs -> new Event(rs.getInt("id"), getObservable(target), moment, what)
         );
     }
 
     @Override
-    public Event insertEvent(Observable target, Timestamp moment, String what, String reason) {
+    public Event insertEvent(int target, Timestamp moment, String what, String reason) {
         return insertRow(
                 SQL_INSERT_EVENT_WITH_REASON,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                     stmt.setString(4, reason);
                 },
-                rs -> new Event(rs.getInt("id"), target, moment, what, reason)
+                rs -> new Event(rs.getInt("id"), getObservable(target), moment, what, reason)
         );
     }
 
     @Override
-    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude) {
+    public LocalEvent insertLocalEvent(int target, Timestamp moment, String what, double latitude, double longitude) {
         return insertRow(
                 SQL_INSERT_LOCAL_EVENT,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                     stmt.setDouble(4, latitude);
                     stmt.setDouble(5, longitude);
                 },
-                rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude)
+                rs -> new LocalEvent(rs.getInt("id"), getObservable(target), moment, what, latitude, longitude)
         );
     }
 
     @Override
-    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude, String reason) {
+    public LocalEvent insertLocalEvent(int target, Timestamp moment, String what, double latitude, double longitude, String reason) {
         return insertRow(
                 SQL_INSERT_LOCAL_EVENT_WITH_REASON,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                     stmt.setDouble(4, latitude);
                     stmt.setDouble(5, longitude);
                     stmt.setString(6, reason);
                 },
-                rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude, reason)
+                rs -> new LocalEvent(rs.getInt("id"), getObservable(target), moment, what, latitude, longitude, reason)
         );
     }
 

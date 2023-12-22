@@ -3,10 +3,7 @@ package be.howest.ti.adria.logic.controller;
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.logic.domain.observables.*;
-import be.howest.ti.adria.logic.domain.proposals.EventProposal;
-import be.howest.ti.adria.logic.domain.proposals.LocalEventProposal;
-import be.howest.ti.adria.logic.domain.proposals.ReservationProposal;
-import be.howest.ti.adria.logic.domain.proposals.ShuttleProposal;
+import be.howest.ti.adria.logic.domain.proposals.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +52,7 @@ public class DefaultController implements Controller {
                 proposal.getPeriodStart(),
                 proposal.getPeriodStop(),
                 proposal.getCompany(),
-                proposal.getRoute().stream().map(x -> Repositories.getH2Repo().getTrack(x)).toList()
+                proposal.getRoute()
         );
     }
 
@@ -66,14 +63,14 @@ public class DefaultController implements Controller {
                 .stream()
                 .filter(e -> filter.getEarliest() == null || filter.getEarliest().before(e.getMoment()) || filter.getEarliest().equals(e.getMoment()) )
                 .filter(e -> filter.getLatest() == null || filter.getLatest().after(e.getMoment()) || filter.getLatest().equals(e.getMoment()) )
-                .filter(e -> filter.getTarget() == null || filter.getTarget().equals(e.getTarget()) )
+                .filter(e -> filter.getTarget() == null || filter.getTarget() == e.getTarget().getId() )
                 .filter(e -> filter.getSubject() == null || filter.getSubject().equals(e.getSubject()) )
                 .toList();
     }
 
     private Event pushBasicEvent(EventProposal proposal) {
         return Repositories.getH2Repo().insertEvent(
-                new UnknownObservable(proposal.getTarget()),
+                proposal.getTarget(),
                 proposal.getMoment(),
                 proposal.getSubject(),
                 proposal.getReason()
@@ -82,7 +79,7 @@ public class DefaultController implements Controller {
 
     private Event pushLocalEvent(LocalEventProposal proposal) {
         return Repositories.getH2Repo().insertLocalEvent(
-                new UnknownObservable(proposal.getTarget()),
+                proposal.getTarget(),
                 proposal.getMoment(),
                 proposal.getSubject(),
                 proposal.getLatitude(),
@@ -96,11 +93,9 @@ public class DefaultController implements Controller {
                 .stream()
                 .filter(r -> r.getPeriodStart().before(event.getMoment())
                         && r.getPeriodStop().after(event.getMoment())
-                        && r.getRoute().contains(event.getTarget()))
+                        && r.getRoute().stream().anyMatch(track -> track.getId() == event.getTarget().getId()))
                 .findAny();
-        if (overlap.isPresent()) {
-            Repositories.getH2Repo().insertNotification(event.getId(), overlap.get().getCompany());
-        }
+        overlap.ifPresent(reservation -> Repositories.getH2Repo().insertNotification(event.getId(), reservation.getCompany()));
     }
 
     @Override

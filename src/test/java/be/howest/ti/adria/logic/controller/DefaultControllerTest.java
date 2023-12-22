@@ -3,10 +3,7 @@ package be.howest.ti.adria.logic.controller;
 import be.howest.ti.adria.logic.data.Repositories;
 import be.howest.ti.adria.logic.domain.*;
 import be.howest.ti.adria.logic.domain.observables.*;
-import be.howest.ti.adria.logic.domain.proposals.EventProposal;
-import be.howest.ti.adria.logic.domain.proposals.LocalEventProposal;
-import be.howest.ti.adria.logic.domain.proposals.ReservationProposal;
-import be.howest.ti.adria.logic.domain.proposals.ShuttleProposal;
+import be.howest.ti.adria.logic.domain.proposals.*;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +24,7 @@ class DefaultControllerTest {
     @BeforeAll
     void setupTestSuite() {
         Repositories.shutdown();
-        JsonObject dbProperties = new JsonObject(Map.of("url", "jdbc:h2:./db-12",
+        JsonObject dbProperties = new JsonObject(Map.of("url", URL,
                 "username", "",
                 "password", "",
                 "webconsole.port", 9000));
@@ -157,7 +154,7 @@ class DefaultControllerTest {
     @Test
     void searchEventsFilterTarget() {
         // Arrange
-        Observable target = new UnknownObservable(4);
+        int target = 4;
         Controller sut = new DefaultController();
         EventFilter filter = new EventFilter();
         filter.setTarget(target);
@@ -168,7 +165,7 @@ class DefaultControllerTest {
         //Assert
         assertNotNull(events);
         assertFalse(events.isEmpty());
-        assertTrue(events.stream().allMatch(x -> target.equals(x.getTarget())));
+        assertTrue(events.stream().allMatch(x -> target == x.getTarget().getId()));
     }
 
     @Test
@@ -294,11 +291,11 @@ class DefaultControllerTest {
     }
 
     @Test
-    void pushEventNotification() {
+    void pushEventNotificationWarn() {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",
@@ -315,11 +312,32 @@ class DefaultControllerTest {
     }
 
     @Test
+    void pushEventNotificationBreak() {
+        // Arrange
+        String company = "Xyzerty";
+        Controller sut = new DefaultController();
+        sut.placeReservation(new ReservationProposal(
+                new Timestamp(1000),
+                new Timestamp(2000),
+                "Xyzerty",
+                List.of(4, 5)
+        ));
+        sut.popUnreadNotifications(company);
+
+        // Act
+        sut.pushEvent(new EventProposal(4, new Timestamp(1500), "BREAK"));
+
+        // Assert
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+        assertFalse(notifications.isEmpty());
+    }
+
+    @Test
     void pushEventNoNotificationTooEarly() {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",
@@ -340,7 +358,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Xyzerty",
@@ -361,7 +379,7 @@ class DefaultControllerTest {
         // Arrange
         String company = "Xyzerty";
         Controller sut = new DefaultController();
-        Reservation reservation = sut.placeReservation(new ReservationProposal(
+        sut.placeReservation(new ReservationProposal(
                 new Timestamp(1000),
                 new Timestamp(2000),
                 "Macroogle",
@@ -370,7 +388,28 @@ class DefaultControllerTest {
         sut.popUnreadNotifications(company);
 
         // Act
-        sut.pushEvent(new EventProposal(4, new Timestamp(500), "WARN"));
+        sut.pushEvent(new EventProposal(4, new Timestamp(1500), "WARN"));
+
+        // Assert
+        List<Notification> notifications = sut.popUnreadNotifications(company);
+        assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    void pushEventNoNotificationWrongTrack() {
+        // Arrange
+        String company = "Xyzerty";
+        Controller sut = new DefaultController();
+        sut.placeReservation(new ReservationProposal(
+                new Timestamp(1000),
+                new Timestamp(2000),
+                "Xyzerty",
+                List.of(5)
+        ));
+        sut.popUnreadNotifications(company);
+
+        // Act
+        sut.pushEvent(new EventProposal(4, new Timestamp(1500), "WARN"));
 
         // Assert
         List<Notification> notifications = sut.popUnreadNotifications(company);
