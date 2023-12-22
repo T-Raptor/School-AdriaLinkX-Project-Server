@@ -74,7 +74,7 @@ public abstract class EventRepositoryTest {
     @Test
     void insertEvent() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
+        int target = 4;
         Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
 
@@ -83,7 +83,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
     }
@@ -91,7 +91,7 @@ public abstract class EventRepositoryTest {
     @Test
     void insertEventWithReason() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
+        int target = 4;
         Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         String reason = "Snorlax sleepin on da track";
@@ -101,7 +101,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
         Assertions.assertEquals(reason, event.getReason());
@@ -110,7 +110,7 @@ public abstract class EventRepositoryTest {
     @Test
     void insertLocalEvent() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
+        int target = 4;
         Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         double latitude = 45;
@@ -121,7 +121,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
     }
@@ -129,7 +129,7 @@ public abstract class EventRepositoryTest {
     @Test
     void insertLocalEventWithReason() {
         // Arrange
-        Observable target = trackRepository.getTracks().get(0);
+        int target = 4;
         Timestamp moment = Timestamp.valueOf("2023-08-19 12:00:05");
         String subject = "break";
         double latitude = 45;
@@ -141,7 +141,7 @@ public abstract class EventRepositoryTest {
 
         // Assert
         Assertions.assertNotNull(event);
-        Assertions.assertEquals(target, event.getTarget());
+        Assertions.assertEquals(target, event.getTarget().getId());
         Assertions.assertEquals(moment, event.getMoment());
         Assertions.assertEquals(subject, event.getSubject());
         Assertions.assertEquals(reason, event.getReason());

@@ -439,60 +439,60 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
 
     @Override
-    public Event insertEvent(Observable target, Timestamp moment, String what) {
+    public Event insertEvent(int target, Timestamp moment, String what) {
         return insertRow(
                 SQL_INSERT_EVENT,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                 },
-                rs -> new Event(rs.getInt("id"), target, moment, what)
+                rs -> new Event(rs.getInt("id"), new UnknownObservable(target), moment, what)
         );
     }
 
     @Override
-    public Event insertEvent(Observable target, Timestamp moment, String what, String reason) {
+    public Event insertEvent(int target, Timestamp moment, String what, String reason) {
         return insertRow(
                 SQL_INSERT_EVENT_WITH_REASON,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                     stmt.setString(4, reason);
                 },
-                rs -> new Event(rs.getInt("id"), target, moment, what, reason)
+                rs -> new Event(rs.getInt("id"), new UnknownObservable(target), moment, what, reason)
         );
     }
 
     @Override
-    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude) {
+    public LocalEvent insertLocalEvent(int target, Timestamp moment, String what, double latitude, double longitude) {
         return insertRow(
                 SQL_INSERT_LOCAL_EVENT,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                     stmt.setDouble(4, latitude);
                     stmt.setDouble(5, longitude);
                 },
-                rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude)
+                rs -> new LocalEvent(rs.getInt("id"), new UnknownObservable(target), moment, what, latitude, longitude)
         );
     }
 
     @Override
-    public LocalEvent insertLocalEvent(Observable target, Timestamp moment, String what, double latitude, double longitude, String reason) {
+    public LocalEvent insertLocalEvent(int target, Timestamp moment, String what, double latitude, double longitude, String reason) {
         return insertRow(
                 SQL_INSERT_LOCAL_EVENT_WITH_REASON,
                 stmt -> {
-                    stmt.setInt(1, target.getId());
+                    stmt.setInt(1, target);
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                     stmt.setDouble(4, latitude);
                     stmt.setDouble(5, longitude);
                     stmt.setString(6, reason);
                 },
-                rs -> new LocalEvent(rs.getInt("id"), target, moment, what, latitude, longitude, reason)
+                rs -> new LocalEvent(rs.getInt("id"), new UnknownObservable(target), moment, what, latitude, longitude, reason)
         );
     }
 

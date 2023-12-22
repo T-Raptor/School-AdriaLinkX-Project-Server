@@ -70,7 +70,7 @@ public class DefaultController implements Controller {
 
     private Event pushBasicEvent(EventProposal proposal) {
         return Repositories.getH2Repo().insertEvent(
-                new UnknownObservable(proposal.getTarget()),
+                proposal.getTarget(),
                 proposal.getMoment(),
                 proposal.getSubject(),
                 proposal.getReason()
@@ -79,7 +79,7 @@ public class DefaultController implements Controller {
 
     private Event pushLocalEvent(LocalEventProposal proposal) {
         return Repositories.getH2Repo().insertLocalEvent(
-                new UnknownObservable(proposal.getTarget()),
+                proposal.getTarget(),
                 proposal.getMoment(),
                 proposal.getSubject(),
                 proposal.getLatitude(),
