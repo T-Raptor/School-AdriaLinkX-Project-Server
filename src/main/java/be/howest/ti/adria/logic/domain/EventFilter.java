@@ -3,7 +3,7 @@ package be.howest.ti.adria.logic.domain;
 import java.sql.Timestamp;
 
 public class EventFilter {
-    private Observable target;
+    private Integer target;
     private String subject;
     private Timestamp earliest;
     private Timestamp latest;
@@ -17,7 +17,7 @@ public class EventFilter {
     }
 
 
-    public Observable getTarget() {
+    public Integer getTarget() {
         return target;
     }
 
@@ -34,7 +34,7 @@ public class EventFilter {
     }
 
 
-    public void setTarget(Observable target) {
+    public void setTarget(Integer target) {
         this.target = target;
     }
 
