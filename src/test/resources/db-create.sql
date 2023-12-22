@@ -3,6 +3,7 @@ DROP ALL OBJECTS;
 create table observables
 (
     id  int auto_increment,
+    subtype varchar(50),
     primary key (id)
 );
 

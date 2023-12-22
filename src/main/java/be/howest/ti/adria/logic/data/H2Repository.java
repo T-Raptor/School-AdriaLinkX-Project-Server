@@ -25,14 +25,15 @@ Please always use interfaces when needed.
 To make this class useful, please complete it with the topics seen in the module OOA & SD
  */
 
-public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository, NotificationRepository {
+public class H2Repository implements StationRepository, TrackRepository, ReservationRepository, ShuttleRepository, EventRepository, NotificationRepository, ObservableRepository {
     private static final Logger LOGGER = Logger.getLogger(H2Repository.class.getName());
 
     private static final String COLUMN_LATITUDE = "latitude";
     private static final String COLUMN_LONGITUDE = "longitude";
     private static final String COLUMN_COMPANY = "company";
 
-    private static final String SQL_INSERT_OBSERVABLE = "insert into observables values ();";
+    private static final String SQL_SELECT_OBSERVABLE = "select * from observables where id = ?;";
+    private static final String SQL_INSERT_OBSERVABLE = "insert into observables (subtype) values (?);";
 
     private static final String SQL_SELECT_STATIONS = "select observable_id as id, name, latitude, longitude from stations;";
     private static final String SQL_SELECT_STATION = "select observable_id as id, name, latitude, longitude from stations where observable_id = ?;";
@@ -211,12 +212,35 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
         }
     }
 
-    private int insertObservable() {
+
+    @Override
+    public <T extends Observable> ObservableInfo insertObservableInfo(Class<T> subtype) {
         return insertRow(
                 SQL_INSERT_OBSERVABLE,
-                stmt -> {},
-                rs -> rs.getInt(1)
+                stmt -> stmt.setString(1, subtype.getSimpleName()),
+                rs -> new ObservableInfo(rs.getInt(1), subtype.getSimpleName())
         );
+    }
+
+    @Override
+    public ObservableInfo getObservableInfo(int id) {
+        return getRow(
+                SQL_SELECT_OBSERVABLE,
+                stmt -> stmt.setInt(1, id),
+                rs -> new ObservableInfo(id, rs.getString("subtype"))
+        );
+    }
+
+    @Override
+    public Observable getObservable(int id) {
+        ObservableInfo observableInfo = getObservableInfo(id);
+        return switch (observableInfo.getSubtype()) {
+            case "Reservation" -> getReservation(id);
+            case "Shuttle" -> getShuttle(id);
+            case "Station" -> getStation(id);
+            case "Track" -> getTrack(id);
+            default -> throw new RepositoryException("Unknown observable subtype");
+        };
     }
 
 
@@ -312,7 +336,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
     }
     @Override
     public Reservation insertReservation(Timestamp periodStart, Timestamp periodStop, String company, List<Integer> route) {
-        int id = insertObservable();
+        int id = insertObservableInfo(Reservation.class).getId();
 
         Reservation reservation = insertRow(
                 SQL_INSERT_RESERVATION,
@@ -368,7 +392,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
 
     @Override
     public Shuttle insertShuttle(String serial) {
-        int id = insertObservable();
+        int id = insertObservableInfo(Shuttle.class).getId();
         return insertRow(
                 SQL_INSERT_SHUTTLE,
                 stmt -> {
@@ -387,7 +411,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 stmt -> { },
                 rs -> {
                     int id = rs.getInt("id");
-                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Observable observable = getObservable(rs.getInt("target"));
                     Timestamp moment = rs.getTimestamp("moment");
                     String subject = rs.getString("class");
                     String reason = rs.getString("reason");
@@ -416,7 +440,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                 stmt -> stmt.setInt(1, id),
                 rs -> {
                     int idRemote = rs.getInt("id");
-                    Observable observable = new UnknownObservable(rs.getInt("target"));
+                    Observable observable = getObservable(rs.getInt("target"));
                     Timestamp moment = rs.getTimestamp("moment");
                     String subject = rs.getString("class");
                     String reason = rs.getString("reason");
@@ -447,7 +471,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setTimestamp(2, moment);
                     stmt.setString(3, what);
                 },
-                rs -> new Event(rs.getInt("id"), new UnknownObservable(target), moment, what)
+                rs -> new Event(rs.getInt("id"), getObservable(target), moment, what)
         );
     }
 
@@ -461,7 +485,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setString(3, what);
                     stmt.setString(4, reason);
                 },
-                rs -> new Event(rs.getInt("id"), new UnknownObservable(target), moment, what, reason)
+                rs -> new Event(rs.getInt("id"), getObservable(target), moment, what, reason)
         );
     }
 
@@ -476,7 +500,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setDouble(4, latitude);
                     stmt.setDouble(5, longitude);
                 },
-                rs -> new LocalEvent(rs.getInt("id"), new UnknownObservable(target), moment, what, latitude, longitude)
+                rs -> new LocalEvent(rs.getInt("id"), getObservable(target), moment, what, latitude, longitude)
         );
     }
 
@@ -492,7 +516,7 @@ public class H2Repository implements StationRepository, TrackRepository, Reserva
                     stmt.setDouble(5, longitude);
                     stmt.setString(6, reason);
                 },
-                rs -> new LocalEvent(rs.getInt("id"), new UnknownObservable(target), moment, what, latitude, longitude, reason)
+                rs -> new LocalEvent(rs.getInt("id"), getObservable(target), moment, what, latitude, longitude, reason)
         );
     }
 
